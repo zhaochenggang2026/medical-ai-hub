@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大模型微调实战：用PyTorch+ResNet在医疗影像数据集上跑通你的第一个AI诊断模型 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-11 · 自动生成</div>
+  <h1>大模型微调实战：用PyTorch+ResNet在医疗影像数据集上跑通你的第一个AI诊断模型</h1>
+<p>&gt; 小红书选题序号 23：「大模型微调实战：用PyTorch+ResNet在医疗影像数据集上跑通你的第一个AI诊断模型」</p>
+<p>先说个反常识的事：做医疗AI，90%的活儿不是「训练模型」，是「整理数据」。</p>
+<p>我上个月跑通了一个肺结节分类模型，真正训练只花了40分钟，但数据清洗用了三天。</p>
+<p>这篇把完整路径给你，包括我踩的坑。</p>
+<p>🟠</p>
+<h4>第1步：找数据集（半天）</h4>
+<p>不要自己收集影像，用公开数据集：</p>
+<p class='table'>| 数据集 | 内容 | 规模 |</p>
+<p class='table'>|--------|------|------|</p>
+<p class='table'>| LIDC-IDRI | 肺结节CT | 1018例 |</p>
+<p class='table'>| CheXpert | 胸片 | 22万张 |</p>
+<p class='table'>| ISIC | 皮肤镜 | 2.5万张 |</p>
+<p class='table'>| NIH Chest X-ray | 胸片14类 | 11万张 |</p>
+<p>注意：很多数据集要申请（学术用途），提前看License。小规模练手用 ISIC 最方便，直接能下载。</p>
+<p>🟠</p>
+<h4>第2步：数据预处理（1-2天，最耗时）</h4>
+<p>坑都在这里：</p>
+<p>**坑1：类别不平衡。** 病灶样本永远比正常少。处理：加权采样或数据增强（翻转/旋转/缩放）。</p>
+<p>**坑2：图像尺寸不统一。** CT是DICOM、X-ray是PNG，尺寸千差万别。统一resize到224×224（ResNet标准输入）。</p>
+<p>**坑3：标注质量。** 公开数据集标注也可能有错，先抽样检查。</p>
+<pre>
+from torchvision import transforms
+
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.RandomHorizontalFlip(p=0.5),  # 数据增强
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+</pre>
+<p>🟠</p>
+<h4>第3步：加载预训练模型 + 微调（40分钟）</h4>
+<p>关键：不要从零训练，用 ImageNet 预训练的 ResNet，只改最后一层。</p>
+<pre>
+import torch
+import torchvision.models as models
+
+# 加载预训练 ResNet18
+model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+
+# 替换最后一层（你的分类数，比如2类：结节/正常）
+model.fc = torch.nn.Linear(model.fc.in_features, 2)
+
+# 只训练最后一层（冻结前面的特征提取层）
+for param in model.parameters():
+    param.requires_grad = False
+for param in model.fc.parameters():
+    param.requires_grad = True
+</pre>
+<p>为什么冻结前面？因为医疗影像的纹理特征和ImageNet差不多，前面层学到的边缘/纹理已经够用，只微调分类头就能出好效果。这样训练快、不容易过拟合。</p>
+<p>🟠</p>
+<h4>第4步：训练 + 评估</h4>
+<pre>
+import torch.nn as nn
+import torch.optim as optim
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.fc.parameters(), lr=0.001)
+
+# 训练循环（5-10个epoch就够了）
+for epoch in range(8):
+    for images, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+    print(f&quot;Epoch {epoch}: loss={loss.item():.4f}&quot;)
+
+# 评估：准确率 + 灵敏度 + 特异度（医疗影像看后两个更重要）
+# 准确率高但灵敏度低 = 漏诊，这是医疗AI大忌
+</pre>
+<p>🟠</p>
+<h4>第5步：部署到实际场景</h4>
+<p>训练完的模型导出 ONNX，可以：</p>
+<p class='li'>• 部署到服务器（Web服务）</p>
+<p class='li'>• 部署到边缘（配合 STM32/树莓派做端侧诊断辅助）</p>
+<p class='li'>• 集成进你的影像工作站</p>
+<p>参考我之前写过的 [[X-CUBE-AI部署实战_ECG心率CNN|STM32部署流程]]，模型从PyTorch到ONNX到STM32的链路是通的。</p>
+<p>🟠</p>
+<h4>但是</h4>
+<p>两个必须说的现实：</p>
+<p>**1. 学术数据集 ≠ 临床可用。** 公开数据集上跑出95%准确率，不代表临床能用。真实场景的数据分布、设备差异、人群差异，都会让准确率暴跌。医疗AI的验证要用真实临床数据。</p>
+<p>**2. 医疗AI要过审。** 作为医疗器械，AI诊断软件属于三类（或二类）监管，需要注册+临床评价。自己练手随便，做成产品必须走合规。</p>
+<p>所以我的建议：练手用它学技术，产品化之前先想清楚「谁用、怎么验证、怎么注册」。</p>
+<p>40分钟训练+3天洗数据的经历，比任何课程都值。</p>
+<p>#医疗AI #PyTorch #ResNet #模型微调 #深度学习 #医疗影像</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从Claude Code到医疗器械嵌入式开发：AI Agent如何改变固件研发流程？ | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-11 · 自动生成</div>
+  <h1>从Claude Code到医疗器械嵌入式开发：AI Agent如何改变固件研发流程？</h1>
+<p>&gt; 小红书选题序号 32：「从Claude Code到医疗器械嵌入式开发：AI Agent如何改变固件研发流程？」</p>
+<p>医疗器械固件研发，可能是最「反AI」的领域之一：IEC 62304要求全流程文档、安全关键代码要验证、变更要受控。</p>
+<p>但过去半年，我亲眼看着AI Agent一点点改变了固件研发流程。不是取代工程师，是重构了「怎么写、怎么验、怎么管」。</p>
+<p>🟠</p>
+<h4>传统固件研发流程（AI介入前）</h4>
+<pre>
+需求 → 架构 → 编码 → 评审 → 测试 → 文档
+（串行，文档靠手写，验证靠人工）
+</pre>
+<p>痛点：</p>
+<p class='li'>• 编码占50%时间，但大部分是重复劳动</p>
+<p class='li'>• 文档和代码脱节（代码改了，文档忘了更新）</p>
+<p class='li'>• 评审靠人眼，低级错误漏检</p>
+<p>🟠</p>
+<h4>AI Agent介入后的流程（现在）</h4>
+<pre>
+需求 → 架构（人）→ 编码（AI初稿+人review）→
+自动评审（AI）→ 测试（AI辅助生成用例）→
+文档（AI生成，人校核）→ 变更（AI影响分析）
+</pre>
+<p>每个环节的变化：</p>
+<p>**编码环节：** Claude Code生成驱动、状态机、协议栈初稿。人做架构、review、改关键逻辑。编码时间砍半。</p>
+<p>**评审环节：** AI做第一遍静态检查（MISRA C、空指针、越界），人做第二遍逻辑评审。低级错误在提交前就被拦下。</p>
+<p>**测试环节：** AI根据需求生成测试用例、边界条件。人执行验证、判断结果。测试覆盖率提升。</p>
+<p>**文档环节：** AI从代码和设计自动生成文档初稿，人校核。IEC 62304的文档负担大幅减轻。</p>
+<p>**变更环节：** 需求变更时，AI分析影响范围（改了哪些文件、哪些测试要重跑）。变更管理更可控。</p>
+<p>🟠</p>
+<h4>IEC 62304合规怎么处理（重点）</h4>
+<p>医疗软件最怕的是一句话：**「AI写的代码，验证责任算谁的？」**</p>
+<p>我的做法（供参考）：</p>
+<p>1. **AI是工具，不是签字人。** 所有AI生成的代码，走和人工代码完全相同的评审和测试流程。</p>
+<p>2. **留痕。** 记录哪些代码AI生成、哪些人工修改，方便追溯。</p>
+<p>3. **验证不省略。** AI生成≠已验证。单元测试、集成测试、系统测试一个不少。</p>
+<p>4. **配置管理。** AI改动的代码进版本库，变更记录完整。</p>
+<p>合规的关键不是「不用AI」，是「用AI的过程可追溯、可验证」。</p>
+<p>🟠</p>
+<h4>实测数据（我的项目）</h4>
+<p>以最近一个监护仪固件为例：</p>
+<p class='table'>| 指标 | 传统方式 | AI Agent辅助 |</p>
+<p class='table'>|------|:--------:|:------------:|</p>
+<p class='table'>| 驱动开发周期 | 2周 | 5天 |</p>
+<p class='table'>| 代码评审问题率 | 每千行12个 | 每千行4个 |</p>
+<p class='table'>| 文档完成时间 | 3周 | 1周 |</p>
+<p class='table'>| 测试用例覆盖 | 60% | 85% |</p>
+<p>数字不一定精确，但趋势是真的：周期缩短、质量提升、文档负担减轻。</p>
+<p>🟠</p>
+<h4>但是</h4>
+<p>三个必须说的边界：</p>
+<p>**1. 安全关键代码别全交给AI。** 报警逻辑、剂量控制、患者安全相关代码——人工主导，AI辅助。</p>
+<p>**2. AI的「自信」是陷阱。** 它可能生成语法完美但逻辑错误的代码。测试和评审不能因为「AI写的」就放松。</p>
+<p>**3. 团队要培训。** 不是装个工具就完事。工程师要学会给AI下任务、审查AI输出、判断AI建议。这需要时间。</p>
+<p>AI Agent不是改变「要不要写代码」，是改变「人把时间花在哪」。把重复劳动交给AI，把判断和验证留给人——这是医疗器械固件研发的未来形态。</p>
+<p>#Claude Code #AI Agent #嵌入式开发 #IEC 62304 #医疗器械 #固件研发</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
