@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCI-100 非侵入式脑机接口设备 PRD | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-19 · 自动生成</div>
+  <h1>BCI-100 非侵入式脑机接口设备 PRD</h1>
+<p>&gt; 产品需求文档（Product Requirements Document）</p>
+<p>&gt; 版本：V1.0 | 日期：2026-08-19 | 作者：赵承刚</p>
+<p>&gt; 监管依据：[[非侵入式BCI监管全景|BCI 监管全景]]</p>
+<p>&gt; 算法关联：[[EEG信号处理]]、[[滤波器设计实用手册]]</p>
+<h2>一、产品概述</h2>
+<h3>1.1 产品定位</h3>
+<p>**BCI-100** 非侵入式脑机接口设备——EEG 信号采集 + 脑功能状态分析 + 基础 BCI 应用。</p>
+<h4>三条产品线定位（分期）：</h4>
+<p class='table'>| 阶段 | 产品 | 定位 | 监管 |</p>
+<p class='table'>|:----:|------|------|------|</p>
+<p class='table'>| **一期** | 健康管理 EEG 头环 | 睡眠/专注/冥想 | 非医疗器械（低门槛）|</p>
+<p class='table'>| **二期** | 科研级 BCI | 干电极多通道+P300/SSVEP | 科研用途（宽松）|</p>
+<p class='table'>| **三期** | 医疗级 BCI | 神经反馈/脑电康复 | II 类注册（高门槛）|</p>
+<h3>1.2 商业模式</h3>
+<p class='li'>• **一期**：消费级硬件 + 订阅（App 数据分析）</p>
+<p class='li'>• **二期**：科研设备销售 + 数据服务</p>
+<p class='li'>• **三期**：医疗设备 + 医院渠道</p>
+<p class='li'>• 复用 BIS-200 EEG 前端 + NIRS-400 光电器件 → 低成本快速启动</p>
+<h2>二、目标用户与需求</h2>
+<h3>2.1 用户画像（一期为主）</h3>
+<p class='table'>| 用户 | 需求 | 场景 |</p>
+<p class='table'>|------|------|------|</p>
+<p class='table'>| 睡眠障碍人群 | 睡眠分期监测 | 居家 |</p>
+<p class='table'>| 上班族/学生 | 专注力检测 | 办公/学习 |</p>
+<p class='table'>| 冥想/正念用户 | 脑波反馈 | 居家 |</p>
+<p class='table'>| 科研人员（二期）| 脑电数据采集 | 实验室 |</p>
+<p class='table'>| 康复患者（三期）| 神经反馈训练 | 医院/机构 |</p>
+<h3>2.2 核心痛点</h3>
+<p class='li'>• 医院 EEG 设备贵（数万~数十万）、操作复杂</p>
+<p class='li'>• 消费级产品（BrainCo 等）价格高、数据不透明</p>
+<p class='li'>• 睡眠监测手环只测&quot;动&quot;，不测&quot;脑&quot;</p>
+<h2>三、产品需求</h2>
+<h3>3.1 功能需求（FR）</h3>
+<h4>硬件：</h4>
+<p class='table'>| # | 功能 | 规格 |</p>
+<p class='table'>|:-:|------|------|</p>
+<p class='table'>| FR1 | EEG 采集 | 4~8 通道，干电极 |</p>
+<p class='table'>| FR2 | 采样率 | 250~500 SPS |</p>
+<p class='table'>| FR3 | 分辨率 | 24-bit ADC（如 ADS1299）|</p>
+<p class='table'>| FR4 | 带宽 | 0.5~50Hz（含 δ~γ 频带）|</p>
+<p class='table'>| FR5 | 通信 | 蓝牙 BLE（手机 App）|</p>
+<p class='table'>| FR6 | 续航 | ≥8 小时 |</p>
+<p class='table'>| FR7 | 参考/地 | 单极参考 + 右腿驱动（DRL）|</p>
+<h4>软件/算法：</h4>
+<p class='table'>| # | 功能 | 说明 |</p>
+<p class='table'>|:-:|------|------|</p>
+<p class='table'>| FR8 | 伪迹去除 | 眼电/肌电/工频（ICA/自适应）|</p>
+<p class='table'>| FR9 | 频带功率 | δ/θ/α/β/γ 五频带（Welch FFT）|</p>
+<p class='table'>| FR10 | 睡眠分期 | W/N1/N2/N3/REM 自动分期 |</p>
+<p class='table'>| FR11 | 专注度指数 | θ/β 比值等 |</p>
+<p class='table'>| FR12 | 冥想反馈 | α 波增强引导 |</p>
+<p class='table'>| FR13 | 数据可视化 | 实时波形 + 频谱图 |</p>
+<p class='table'>| FR14 | 数据导出 | CSV/EDF 格式（科研用）|</p>
+<h3>3.2 技术规格</h3>
+<p class='table'>| 参数 | 规格 |</p>
+<p class='table'>|------|------|</p>
+<p class='table'>| 通道数 | 4（一期）/ 8（二期）|</p>
+<p class='table'>| ADC | ADS1299（24-bit，8通道）|</p>
+<p class='table'>| MCU | STM32H743（复用 NCP-1 平台）或 STM32N6（AI 升级）|</p>
+<p class='table'>| 电极 | 干电极（导电硅胶/银镀层）|</p>
+<p class='table'>| 通信 | BLE 5.0（nRF52832 或 H743+BLE 模块）|</p>
+<p class='table'>| 电池 | 3.7V 500mAh 锂电 |</p>
+<p class='table'>| 尺寸 | 头环形态，&lt;100g |</p>
+<p class='table'>| App | Android/iOS（Flutter/Qt）|</p>
+<h2>四、系统架构</h2>
+<pre>
+┌─────────────────────────────────────────────┐
+│  干电极阵列（4~8通道）                        │
+│      ↓                                       │
+│  模拟前端（仪表放大 + 滤波 + ADS1299）        │
+│      ↓                                       │
+│  MCU（STM32H743/N6）                         │
+│  ├── 实时采集（DMA+定时）                     │
+│  ├── 信号处理（滤波/FFT/伪迹）                │
+│  ├── BLE 数据流                               │
+│  └── 本地存储（Flash）                        │
+│      ↓                                       │
+│  手机 App（实时波形/睡眠分期/反馈）            │
+└─────────────────────────────────────────────┘
+</pre>
+<h4>与现有平台复用：</h4>
+<p class='li'>• MCU 平台：NCP-1 共用平台（H743）</p>
+<p class='li'>• EEG 前端：复用 BIS-200 的 ADS1299 方案</p>
+<p class='li'>• 算法库：Wiki/2-领域/信号处理/ 全套</p>
+<p class='li'>• 外壳/结构：宋超（合伙人）负责</p>
+<h2>五、算法需求</h2>
+<p>&gt; 详细算法见 [[EEG信号处理]]、[[滤波器设计实用手册]]</p>
+<p class='table'>| 算法模块 | 方法 | 复杂度 |</p>
+<p class='table'>|---------|------|:------:|</p>
+<p class='table'>| 预处理 | 带通 0.5-50Hz + 陷波 50Hz | 低 |</p>
+<p class='table'>| 伪迹去除 | ICA / 回归 / 自适应滤波 | 中 |</p>
+<p class='table'>| 频带功率 | Welch 周期图 + FFT | 低 |</p>
+<p class='table'>| 睡眠分期 | 规则 + 轻量 CNN | 中 |</p>
+<p class='table'>| 专注度 | θ/β 比值 + 特征融合 | 低 |</p>
+<p class='table'>| BCI 范式（二期）| P300 / SSVEP / 运动想象 | 中高 |</p>
+<p>**部署路径：** 算法先 Python 仿真验证 → C 移植（或 X-CUBE-AI 模型部署）→ STM32 运行</p>
+<h2>六、法规与标准</h2>
+<h3>6.1 注册路径（按分期）</h3>
+<p class='table'>| 阶段 | 中国 | 美国 | 欧盟 |</p>
+<p class='table'>|------|------|------|------|</p>
+<p class='table'>| 一期（健康）| 非医疗器械（注意宣传合规）| 通用健康产品豁免 | 非医疗设备 |</p>
+<p class='table'>| 二期（科研）| 按科研用途，宽松 | 视实际用途 | 同左 |</p>
+<p class='table'>| 三期（医疗）| II 类注册 | Class II 510(k) | IIa/IIb CE |</p>
+<h3>6.2 适用标准</h3>
+<pre>
+IEC 60601-2-26（EEG 设备安全性能）  ← 三期医疗必需
+IEC 60601-1（电气安全/EMC）
+IEC 62304（软件生命周期）
+ISO 14971（风险管理）
+ISO 10993（电极生物相容）
+IEC 81001-5-1（网络安全）
+</pre>
+<h3>6.3 关键合规要点</h3>
+<p class='li'>• **一期宣传红线**：不能宣称医疗诊断/治疗（&quot;健康管理&quot;定位）</p>
+<p class='li'>• 数据隐私：脑电数据属敏感数据，需加密 + 合规存储</p>
+<p class='li'>• 网络安全：FDA 2025 指导要求融入 QMS</p>
+<h2>七、项目排期（IPD 框架）</h2>
+<p class='table'>| 阶段 | 内容 | 周期 |</p>
+<p class='table'>|------|------|:----:|</p>
+<p class='table'>| G0 概念评审 | 竞品调研 + 商业案例 | 2周 |</p>
+<p class='table'>| G3 需求输入 | URS + 设计输入 | 2周 |</p>
+<p class='table'>| G4 系统设计 | 架构 + 选型 | 3周 |</p>
+<p class='table'>| G5 硬件开发 | 原理图/PCB（H743+ADS1299）| 6周 |</p>
+<p class='table'>| G6 软件开发 | 采集固件 + 算法移植 | 8周 |</p>
+<p class='table'>| G7 风险分析 | FMEA + 风险管理 | 并行 |</p>
+<p class='table'>| G8 验证 | 信号质量测试 + 稳定性 | 4周 |</p>
+<p class='table'>| G9 确认 | 临床/用户试用（一期：用户测试）| 4周 |</p>
+<p class='table'>| **一期总周期** | | **~6个月** |</p>
+<h2>八、风险与对策</h2>
+<p class='table'>| 风险 | 概率 | 影响 | 对策 |</p>
+<p class='table'>|------|:----:|:----:|------|</p>
+<p class='table'>| 干电极信号质量差 | 高 | 高 | 电极材料选型 + 自适应阻抗补偿 |</p>
+<p class='table'>| 伪迹污染严重 | 高 | 高 | 多级去伪迹 + 信号质量评估 |</p>
+<p class='table'>| 睡眠分期精度不足 | 中 | 中 | 公开数据集（Sleep-EDF）训练 |</p>
+<p class='table'>| 消费级市场教育成本 | 中 | 中 | 健康管理定位 + 内容营销 |</p>
+<p class='table'>| 三期医疗注册周期长 | 低 | 高 | 分期策略，一期先验证 |</p>
+<h2>九、验收标准</h2>
+<p class='table'>| 项目 | 标准 |</p>
+<p class='table'>|------|------|</p>
+<p class='table'>| 信号质量 | SNR ≥ 10dB，工频抑制 ≥ 40dB |</p>
+<p class='table'>| 电极阻抗 | ≤ 50kΩ（干电极）|</p>
+<p class='table'>| 睡眠分期 | 与 PSG 对照准确率 ≥ 75% |</p>
+<p class='table'>| 续航 | ≥ 8 小时连续采集 |</p>
+<p class='table'>| 稳定性 | 24h 连续运行无故障 |</p>
+<p class='table'>| 延迟 | 波形显示延迟 ≤ 500ms |</p>
+<h2>十、竞品参考</h2>
+<p class='table'>| 产品 | 特点 | 价格 |</p>
+<p class='table'>|------|------|------|</p>
+<p class='table'>| BrainCo（脑机接口）| 专注力头环 | 数千元 |</p>
+<p class='table'>| Muse | 冥想 EEG 头带 | ~3000 元 |</p>
+<p class='table'>| Emotiv | 科研多通道 | 数千~数万 |</p>
+<p class='table'>| 小睡眠 | 睡眠监测 | 消费级 |</p>
+<p class='table'>| **BCI-100（我们）** | **医疗级算法+合理价格** | **待定** |</p>
+<h2>相关页面</h2>
+<p class='li'>• [[非侵入式BCI监管全景|BCI 监管全景]]</p>
+<p class='li'>• [[EEG信号处理|EEG 算法]]</p>
+<p class='li'>• [[滤波器设计实用手册|滤波器]]</p>
+<p class='li'>• [[BIS深度麻醉监护算法|BIS（EEG 复用）]]</p>
+<p class='li'>• [[神经重症共用平台设计_NCP-1|NCP-1 共用平台]]</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

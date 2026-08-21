@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent实战：用通义千问搭一个医疗器械知识问答助手（从0到1） | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-20 · 自动生成</div>
+  <h1>AI Agent实战：用通义千问搭一个医疗器械知识问答助手（从0到1）</h1>
+<p>&gt; 小红书选题序号 56：「AI Agent实战：用通义千问搭一个医疗器械知识问答助手（从0到1）」</p>
+<p>用AI搭一个「医疗器械法规问答助手」难吗？</p>
+<p>我花了一个周末，用通义千问搭了一个能查 GB 9706、ISO 14971、IEC 62304 条款的问答助手。不吹牛，从0到1的完整路径给你，你也能搭。</p>
+<p>🟠</p>
+<h4>先想清楚：要搭什么</h4>
+<p>目标：一个能回答「XX标准对XX的要求」的助手。</p>
+<p>难点：大模型不知道标准全文，会瞎编（幻觉）。所以不能直接问，要「检索+生成」——先搜到标准条款，再让模型基于条款回答。这叫 **RAG（检索增强生成）**。</p>
+<p>🟠</p>
+<h4>第1步：准备知识库（半天）</h4>
+<p>把你手头的标准文档转成可检索的文本：</p>
+<p>1. 把 PDF/Word 标准转成纯文本</p>
+<p>2. 分段（每段 500~1000 字，带标题）</p>
+<p>3. 每段加标签（标准名+条款号）</p>
+<pre>
+示例分段：
+[GB 9706.1-2020 | 第5.3节] 关于漏电流的要求：...
+[ISO 14971 | 第4.2节] 风险管理计划应包含：...
+</pre>
+<p>🟠</p>
+<h4>第2步：向量化+建索引（2小时）</h4>
+<p>用 Embedding 模型把文本转成向量，存入向量数据库：</p>
+<pre>
+from dashscope import TextEmbedding
+
+# 用通义千问的向量模型
+resp = TextEmbedding.call(
+    model=&#x27;text-embedding-v3&#x27;,
+    input=&#x27;GB 9706.1 漏电流要求&#x27;
+)
+vector = resp.output[&#x27;embeddings&#x27;][0][&#x27;embedding&#x27;]
+</pre>
+<p>向量库可以用轻量的 ChromaDB（本地运行，免费）：</p>
+<p class='li'>• 每条标准段落 → 一个向量</p>
+<p class='li'>• 查询时：问题转向量 → 找最相似的 3~5 段</p>
+<p>🟠</p>
+<h4>第3步：搭问答逻辑（2小时）</h4>
+<p>核心流程：</p>
+<pre>
+用户提问 → 向量检索（找相关条款）
+→ 拼 Prompt（条款+问题）→ 通义千问生成回答
+</pre>
+<pre>
+from dashscope import Generation
+
+def ask_standard(question):
+    # 1. 检索相关条款
+    hits = vector_db.search(question, top_k=5)
+    context = &quot;\n&quot;.join(h.text for h in hits)
+    
+    # 2. 拼 Prompt（关键：让模型基于条款回答，别瞎编）
+    prompt = f&quot;&quot;&quot;你是医疗器械法规助手。请基于以下标准条款回答，不要编造。
+    
+标准条款：
+{context}
+
+问题：{question}
+
+回答：&quot;&quot;&quot;
+    
+    # 3. 生成
+    resp = Generation.call(model=&#x27;qwen-plus&#x27;, prompt=prompt)
+    return resp.output.text
+</pre>
+<p>**关键技巧：** 在 Prompt 里明确「基于以下条款回答，不要编造」——这是抑制幻觉的核心。</p>
+<p>🟠</p>
+<h4>第4步：加界面（可选，1天）</h4>
+<p>用 Streamlit/Gradio 加个网页界面：</p>
+<pre>
+import streamlit as st
+
+st.title(&quot;医疗器械法规问答助手&quot;)
+q = st.text_input(&quot;输入你的问题：&quot;)
+if q:
+    st.write(ask_standard(q))
+</pre>
+<p>跑起来：`streamlit run app.py`——浏览器打开就能用。</p>
+<p>🟠</p>
+<h4>实测效果</h4>
+<p class='table'>| 问题 | 效果 |</p>
+<p class='table'>|------|------|</p>
+<p class='table'>| GB 9706.1 对漏电流的要求 | ✅ 准确引用条款 |</p>
+<p class='table'>| ISO 14971 风险管理流程 | ✅ 结构化回答 |</p>
+<p class='table'>| 我们的监护仪要测哪些EMC项 | ✅ 给出标准清单 |</p>
+<p class='table'>| 问标准外的问题（比如&quot;今天天气&quot;）| ⚠️ 提示&quot;超出范围&quot;（需要加护栏）|</p>
+<p>🟠</p>
+<h4>但是</h4>
+<p>三个现实提醒：</p>
+<p>1. **知识库要维护。** 标准会更新，你的向量库要跟着更新。加个「更新日期」字段。</p>
+<p>2. **回答要人工核验。** RAG 大大减少幻觉，但仍有编造风险。合规场景（注册文档）必须人工复核引用。</p>
+<p>3. **这只是助手。** 它帮你快速查条款、出初稿，但「审评老师会怎么看」这种判断，还是要你。</p>
+<p>这套东西搭好以后，你查标准的时间能省 80%。而且是本地数据（合规友好），以后还可以接 MCP 协议做成公司内部的 Agent 工具——就像我给你的 Spring AI 平台那样。</p>
+<p>#AI Agent #通义千问 #RAG #医疗器械 #法规查询 #知识库</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

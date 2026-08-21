@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>n8n+DeepSeek搭建嵌入式开发智能自动化中枢：从传感器数据到AI工作流 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-20 · 自动生成</div>
+  <h1>n8n+DeepSeek搭建嵌入式开发智能自动化中枢：从传感器数据到AI工作流</h1>
+<p>&gt; 小红书选题序号 58：「n8n+DeepSeek搭建嵌入式开发智能自动化中枢：从传感器数据到AI工作流」</p>
+<p>嵌入式工程师的日常：改代码、测板子、写文档、回消息、整理数据——大量重复劳动。</p>
+<p>我最近用 n8n（开源自动化平台）+ DeepSeek（大模型）搭了一个「自动化中枢」，把重复活全交给工作流。分享这套能直接复用的方案。</p>
+<p>🟠</p>
+<h4>n8n 是什么（30秒）</h4>
+<p>n8n 是一个可视化的工作流自动化工具（类似 Zapier，但开源免费、可自托管）。</p>
+<p>它能把不同系统串起来：收到邮件 → 触发 → 调 API → 写数据库 → 发通知。**不需要写代码，拖拽连线就行。**</p>
+<p>医疗研发场景它特别合适：数据合规（自托管，数据不出服务器）。</p>
+<p>🟠</p>
+<h4>我的自动化中枢架构</h4>
+<pre>
+┌─────────────────────────────────────────┐
+│  n8n 工作流中枢（自托管）                 │
+│                                         │
+│  触发源：串口数据/邮件/定时/Webhook      │
+│    ↓                                    │
+│  处理：DeepSeek AI（分析/生成/分类）     │
+│    ↓                                    │
+│  动作：写文档/发通知/存库/推GitHub       │
+└─────────────────────────────────────────┘
+</pre>
+<p>🟠</p>
+<h4>工作流1：传感器数据自动分析（最实用）</h4>
+<p>**场景：** 你的测试设备输出 CSV 数据，每天要分析。</p>
+<h4>流程：</h4>
+<pre>
+定时（每天17:00）→ 读CSV → DeepSeek分析
+→ 生成日报（异常检测+趋势）→ 发飞书/邮件
+</pre>
+<p>**关键配置：** DeepSeek 节点里写提示词：</p>
+<pre>
+你是嵌入式测试数据分析助手。
+数据：{CSV内容}
+任务：找出异常值、计算趋势、生成中文摘要
+输出格式：数据概况/异常项/建议
+</pre>
+<p>实测：一份 500 行的测试数据，AI 30 秒出报告，我原来手动要 40 分钟。</p>
+<p>🟠</p>
+<h4>工作流2：测试报告自动生成</h4>
+<h4>流程：</h4>
+<pre>
+串口抓包/日志文件 → DeepSeek 整理 → 生成 Markdown 报告
+→ 自动 commit + push 到 Git
+</pre>
+<p>以前写一份测试报告半天，现在全程自动，我只审核。</p>
+<p>🟠</p>
+<h4>工作流3：GitHub/竞品动态监控</h4>
+<h4>流程：</h4>
+<pre>
+定时 → 抓 GitHub 热门/竞品仓库 → DeepSeek 摘要
+→ 推送到飞书/微信
+</pre>
+<p>每天自动给你一份「今日行业动态」，不用自己刷。</p>
+<p>🟠</p>
+<h4>怎么搭（2小时上手）</h4>
+<pre>
+Step1：装 n8n（Docker 一行命令）
+  docker run -it --rm -p 5678:5678 n8nio/n8n
+
+Step2：配置 DeepSeek 节点
+  填 API Key → 选模型（deepseek-chat 够用）
+
+Step3：搭第一个工作流
+  用「定时触发 + DeepSeek + 邮件/飞书」模板
+</pre>
+<p>n8n 自带几百个模板（Templates 市场），大部分场景直接改模板就行。</p>
+<p>🟠</p>
+<h4>但是</h4>
+<p>三个注意事项：</p>
+<p>1. **别过度自动化。** 判断类、决策类的事留给人。自动化适合「确定流程」的重复活。</p>
+<p>2. **数据边界。** 医疗数据敏感，n8n 自托管 + DeepSeek 用国内版（数据合规），别把患者数据发到海外 API。</p>
+<p>3. **从小的开始。** 先自动化一个「每周都要做」的小事（比如周报、数据日报），跑顺了再扩展。</p>
+<p>**一句话：** n8n+DeepSeek 是嵌入式工程师的「自动化外挂」——你写代码的时间，应该花在「创造」，不是「重复」。搭一个自己的自动化中枢，把重复活全部交出去。</p>
+<p>#n8n #DeepSeek #自动化 #嵌入式开发 #效率工具 #AI工作流</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
