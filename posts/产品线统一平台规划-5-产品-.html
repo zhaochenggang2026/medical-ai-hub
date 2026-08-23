@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产品线统一平台规划（5 产品） | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-22 · 自动生成</div>
+  <h1>产品线统一平台规划（5 产品）</h1>
+<p>&gt; 日期：2026-08-22 | 5 个产品共用平台梳理</p>
+<p>&gt; 目的：最大化复用，降成本、降开发周期、统一供应链</p>
+<h2>一、产品线全景</h2>
+<pre>
+┌──────────────────────────────────────────────────────┐
+│              医疗设备产品矩阵（5 产品）                 │
+│                                                      │
+│  MV-100   手持三合一监护（CO₂+O₂+SpO₂）  二类  进行中  │
+│  ICP-100  颅内压监测（压力+脑温）        三类  IPD完成  │
+│  NIRS-400 脑氧监护（rSO₂）              二类  IPD完成  │
+│  BIS-200  麻醉深度（BIS指数）           二类  IPD完成  │
+│  BCI-100  脑机接口（EEG头环）        健康→医疗 IPD完成  │
+└──────────────────────────────────────────────────────┘
+</pre>
+<h2>二、硬件复用分析</h2>
+<h3>2.1 各产品硬件需求</h3>
+<p class='table'>| 模块 | MV-100 | ICP-100 | NIRS-400 | BIS-200 | BCI-100 |</p>
+<p class='table'>|------|:------:|:-------:|:--------:|:-------:|:-------:|</p>
+<p class='table'>| MCU 主控 | H743 | H743 | H743 | H743 | L4 |</p>
+<p class='table'>| 生物电 ADC | — | ADS1299 | ADS1299 | ADS1299 | ADS1299 |</p>
+<p class='table'>| 信号调理 | 多路 | 桥路 | 光学 | EEG | EEG |</p>
+<p class='table'>| 显示 | 3.5寸 | 7寸 | 10寸 | 10寸 | 无/手机 |</p>
+<p class='table'>| 报警 | ✅ | ✅ | ✅ | ✅ | 手机 |</p>
+<p class='table'>| 电源 | 电池 | 台车 | 台车+电池 | 台车 | 电池 |</p>
+<p class='table'>| 通信 | BLE | 串口 | 网络 | 网络 | BLE |</p>
+<p class='table'>| 探头/耗材 | 多传感器 | 压力探头 | 光学探头 | EEG电极 | EEG电极 |</p>
+<h3>2.2 共用模块识别</h3>
+<pre>
+★ 高度共用：
+  MCU 平台（H743 核心板）→ 4/5 产品
+  ADS1299 生物电采集 → 4/5 产品
+  报警引擎（YY 9706.108）→ 4/5 产品
+  显示驱动（LVGL）→ 4/5 产品
+  电源管理 → 全部
+  外壳结构（宋超）→ 全部
+
+◐ 部分共用：
+  EEG 前端（BIS-200/BCI-100 共用）
+  光学链路（NIRS-400/BCI-100 fNIRS 共用）
+  信号处理算法库（全部）
+
+○ 独有：
+  CO₂/SpO₂/O₂ 传感器链（MV-100）
+  压力桥路+温补（ICP-100）
+</pre>
+<h2>三、统一平台架构（NCP-2）</h2>
+<h3>3.1 平台分层</h3>
+<pre>
+┌─────────────────────────────────────────────┐
+│  应用层（各产品独有）                         │
+│  MV-100 监护│ICP 监测│NIRS 脑氧│BIS 麻醉│BCI │
+├─────────────────────────────────────────────┤
+│  中间层（平台共用）★                         │
+│  LVGL GUI│报警引擎│数据管理│通信协议│趋势    │
+├─────────────────────────────────────────────┤
+│  驱动层（平台共用）★                         │
+│  H743 BSP│ADS1299│LCD│电源│Flash│网络       │
+├─────────────────────────────────────────────┤
+│  硬件层                                      │
+│  NCP-2 核心板（H743+ADS1299+电源+LCD接口）   │
+│  + 各产品前端板（传感器专用）                 │
+└─────────────────────────────────────────────┘
+</pre>
+<h3>3.2 核心板设计（NCP-2 统一板）</h3>
+<pre>
+NCP-2 核心板（4/5 产品共用）：
+  ├── STM32H743（480MHz）
+  ├── ADS1299（8ch 24bit 生物电）
+  ├── 电源（12V 输入 + 电池）
+  ├── LCD 接口（3.5~10寸自适应）
+  ├── 报警（声光）
+  ├── 通信（串口/网络/BLE 可选）
+  └── 扩展接口（传感器前端板插接）
+
+成本：~350 元/板
+</pre>
+<h3>3.3 前端板（各产品独有）</h3>
+<pre>
+┌──────────┬──────────────────────────────┐
+│ 产品     │ 前端板                       │
+├──────────┼──────────────────────────────┤
+│ MV-100   │ 多传感器板（CO₂/SpO₂/O₂）   │
+│ ICP-100  │ 桥路+温补板                 │
+│ NIRS-400 │ 光学板（LED+APD）           │
+│ BIS-200  │ EEG 前端（含屏蔽）          │
+│ BCI-100  │ EEG 前端（低功耗版）        │
+└──────────┴──────────────────────────────┘
+</pre>
+<h2>四、软件统一平台</h2>
+<h3>4.1 统一软件框架</h3>
+<pre>
+NCP-SW 统一软件框架：
+  ├── HAL 层（STM32Cube）
+  ├── 驱动层（LCD/ADS1299/Flash/网络）
+  ├── 中间层（LVGL/报警/数据/协议）
+  └── 应用层（各产品 App 差异化）
+
+复用率：~60% 代码共用
+</pre>
+<h3>4.2 统一报警引擎（YY 9706.108）</h3>
+<pre>
+报警分级：高/中/低（声光分级）
+报警参数表：各产品配置自己的参数
+统一接口：alarm_init()/alarm_trigger()/alarm_ack()
+</pre>
+<h3>4.3 统一 GUI 框架</h3>
+<pre>
+LVGL 主题统一（医疗深色主题）
+页面模板：主界面/趋势/报警/设置
+各产品换数据源即可
+</pre>
+<h2>五、成本与效益分析</h2>
+<h3>5.1 开发成本节省</h3>
+<p class='table'>| 模块 | 独立开发 | 平台复用 | 节省 |</p>
+<p class='table'>|------|:--------:|:--------:|:----:|</p>
+<p class='table'>| 核心板硬件 | 5×15人天 | 1×20人天 | 55人天 |</p>
+<p class='table'>| 驱动层 | 5×10人天 | 1×15人天 | 35人天 |</p>
+<p class='table'>| 报警引擎 | 5×8人天 | 1×10人天 | 30人天 |</p>
+<p class='table'>| GUI 框架 | 5×10人天 | 1×12人天 | 38人天 |</p>
+<p class='table'>| **合计** | **215人天** | **57人天** | **158人天（73%）** |</p>
+<h3>5.2 供应链统一</h3>
+<pre>
+统一物料清单（共用件 60%）：
+  STM32H743 / ADS1299 / LCD / 电源 IC
+  → 集中采购，议价能力↑，库存↓
+
+统一 BOM 管理 → 一套物料多产品用
+</pre>
+<h3>5.3 生产与质量</h3>
+<pre>
+统一 SMT 产线（核心板批量）
+统一老化测试
+统一出厂检验
+统一维修备件
+</pre>
+<h2>六、平台迭代计划</h2>
+<h3>6.1 三阶段</h3>
+<pre>
+阶段1（当前）：NCP-1 平台（MV-100 在用）
+  → 验证基础架构
+
+阶段2（6个月）：NCP-2 统一核心板
+  → MV-100 升级 + BIS-200/BCI-100 上板
+
+阶段3（12个月）：NCP-2 全产品覆盖
+  → ICP-100/NIRS-400 接入
+  → 5 产品全部统一
+</pre>
+<h3>6.2 里程碑</h3>
+<p class='table'>| 里程碑 | 时间 | 交付 |</p>
+<p class='table'>|--------|:----:|------|</p>
+<p class='table'>| NCP-2 核心板设计 | 3个月 | 原理图+PCB |</p>
+<p class='table'>| NCP-2 样板验证 | 4个月 | 跑通 |</p>
+<p class='table'>| MV-100 迁移 | 6个月 | 升级完成 |</p>
+<p class='table'>| BIS/BCI 接入 | 8个月 | 两产品上板 |</p>
+<p class='table'>| ICP/NIRS 接入 | 12个月 | 全产品统一 |</p>
+<h2>七、结论</h2>
+<pre>
+统一平台收益：
+  ✅ 开发成本省 73%（158人天）
+  ✅ 供应链集中（议价+库存）
+  ✅ 生产统一（产线/测试/维修）
+  ✅ 维修备件统一
+  ✅ 合规文档复用（体系文件）
+
+核心板成本：~350 元（比各产品独立板省 30%+）
+</pre>
+<h2>相关页面</h2>
+<p class='li'>• [[神经重症共用平台设计_NCP-1|NCP-1 平台]]</p>
+<p class='li'>• [[医疗硬件平台横向对比|硬件平台对比]]</p>
+<p class='li'>• [[IPD项目样板_医疗器械|IPD 样板]]</p>
+<p class='li'>• [[Hermes多分身团队实战|分身团队]]</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
