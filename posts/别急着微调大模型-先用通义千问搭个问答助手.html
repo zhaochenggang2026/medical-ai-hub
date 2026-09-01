@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>别急着微调大模型，先用通义千问搭个问答助手 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-31 · 自动生成</div>
+  <h1>别急着微调大模型，先用通义千问搭个问答助手</h1>
+<p>做了多年医疗器械研发，说点关于提效的实话。</p>
+<p>周五下午，研发群里又有人问「GB 9706.1 里那个漏电流限值到底怎么判定」。这个问题我们答过不下十遍。我盯着聊天记录想，与其反复解释，不如给法规文档装个脑子。</p>
+<p>🟠 现象</p>
+<p>医疗器械研发的知识库又大又散。GB 9706 系列、ISO 13485、IEC 62304，加上内部设计规范和历次评审意见，几千页文档躺在共享盘里。新人问老员工，老员工凭记忆答，答错了没人知道。</p>
+<p>#医疗器械</p>
+<p>🟠 机制</p>
+<p>我搭了一个最朴素的 RAG 问答助手，检索增强生成，就是把文档切块、向量化、存进向量库，用户提问时先检索相关片段，再让大模型基于片段回答。技术栈很轻：文档用 LangChain 切块，Embedding 和生成都用通义千问的接口，向量检索用 Faiss，最后套一个 Streamlit 界面。向量库规模不大，十万条以内的片段 Faiss 跑本地绰绰有余。跑通只花了一个周末。上传标准文档，提问，回答后面附上引用段落，同事能自己核对出处。</p>
+<p>#AI #程序员</p>
+<p>🟠 现实</p>
+<p>**Agent 的价值不在模型多聪明，在检索够不够准**。我踩了两个坑：一是切块大小要调，切太大检索出来一堆噪音，切太小上下文不连贯，试了几轮才稳定；二是问答助手会一本正经地胡说，我在提示词里加了「找不到依据就明说不知道」，回答质量立刻不一样。我还把历次评审意见也喂了进去，很多历史问题其实早就有人踩过，新同事直接搜得到。团队里现在查标准，第一反应是问助手而不是翻文件。但是，这玩意只是辅助。法规判断的最终解释权在注册和质量团队手里，AI 能给的是线索，不是结论。</p>
+<p>#职场</p>
+<p>🟠 结论</p>
+<p>不用等大模型变强，先把已有的文档用起来，提效是立竿见影的。</p>
+<p>工具越简单，越能坚持用下去。</p>
+<p>你怎么看？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

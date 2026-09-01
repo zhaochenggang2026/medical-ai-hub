@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECCV新论文，AI生成缺陷图帮质检少走弯路 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-08-31 · 自动生成</div>
+  <h1>ECCV新论文，AI生成缺陷图帮质检少走弯路</h1>
+<p>搞医疗器械视觉检测这些年，缺数据这个坑太熟了。</p>
+<p>周六晚上，我把 ECCV 2026 那几篇可控生成的文章翻完，脑子里全是同一句话：这套东西，不就是给质检缺数据准备的。</p>
+<p>🟠 现象</p>
+<p>医疗器械视觉质检有个老毛病，缺陷样本永远不够。注塑件的气泡、密封圈的裂纹、PCB 上的虚焊，良品成千上万，缺陷就那么几张。训练一个检测模型，数据不够，模型就学不扎实，误检漏检一起冒出来。</p>
+<p>#医疗器械</p>
+<p>🟠 机制</p>
+<p>可控生成解决的就是样本问题。扩散模型加上 ControlNet 这类控制条件，可以在保持产品外观一致的前提下，精准注入指定类型的缺陷。想要划痕就生成划痕，想要气泡就生成气泡，位置、数量、严重程度都能调，缺陷类型用文本描述控制，不用重新训练模型，换场景只换提示词。我把生成的缺陷图贴到正常图上做数据增强，检测模型在小样本上的表现肉眼可见地变好。**这比网上搜图、人工标注的土办法高效太多**。</p>
+<p>#AI #科技</p>
+<p>🟠 现实</p>
+<p>但是，合成数据有个绕不开的坑：分布偏移。生成的缺陷和真实缺陷之间总有差异，模型在合成数据上学到的特征，未必在真实产线上成立。我自己的做法是：先用少量真实缺陷做校准，再在保留的真实测试集上验证，效果达标才敢进流程，生成批次之间还要抽检，防止同一张图反复出现把模型带偏。另外提醒一句，医疗设备相关的验证数据如果要走注册，合成数据的合规地位要先跟质量部门确认清楚，别拿它直接顶替真实验证。</p>
+<p>#工程师</p>
+<p>🟠 结论</p>
+<p>可控生成不是万能药，但它是质检团队手里一张值得打的牌。</p>
+<p>技术前沿和产线落地之间，差的从来不是论文，是验证。</p>
+<p>你怎么看？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
