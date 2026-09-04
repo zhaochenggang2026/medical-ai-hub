@@ -15,9 +15,10 @@ import glob
 VAULT_DIR = os.path.expanduser("~/obsidian-zhaochenggang")
 ARTICLE_DIR = os.path.join(VAULT_DIR, "Outputs/1-技术方案")
 SITE_DIR = os.path.expanduser("~/website-demo")
-# GitHub 仓库：走 SSH（obsidian_key）。HTTPS 443 间歇性超时，2026-09-04 改为 SSH 推送 + 重试
-SSH_KEY = os.path.expanduser("~/.ssh/obsidian_key")
-GITHUB_REPO = "git@github.com:zhaochenggang2026/medical-ai-hub.git"
+# GitHub 仓库（token 通过环境变量 GITHUB_TOKEN 提供，避免密钥入库）
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO = (f"https://x-access-token:{GITHUB_TOKEN}@github.com/zhaochenggang2026/medical-ai-hub.git"
+               if GITHUB_TOKEN else "https://github.com/zhaochenggang2026/medical-ai-hub.git")
 MAX_ARTICLES = 8  # 首页显示文章数
 
 # 排除的文件（非文章）
@@ -231,18 +232,23 @@ def main():
                     "-c", "user.email=hermes@nousresearch.com",
                     "commit", "-m", f"auto update {datetime.date.today().isoformat()}"],
                    capture_output=True)
-    push_env = dict(os.environ, GIT_SSH_COMMAND=f"ssh -i {SSH_KEY} -o StrictHostKeyChecking=accept-new")
+    # HTTPS token 推送 + 3 次重试（443 间歇性超时，2026-09-04 加固）
     r = None
     for attempt in range(3):
-        r = subprocess.run(["git", "push", "-f", GITHUB_REPO, "HEAD:master"],
-                           capture_output=True, text=True, timeout=120, env=push_env)
+        try:
+            r = subprocess.run(["git", "push", "-f", GITHUB_REPO, "HEAD:master"],
+                               capture_output=True, text=True, timeout=150)
+        except subprocess.TimeoutExpired:
+            print(f"⚠️ 推送第 {attempt+1} 次超时（>150s）")
+            continue
         if r.returncode == 0 or "Everything up-to-date" in r.stderr:
             break
-        print(f"⚠️ 推送第 {attempt+1} 次失败: {r.stderr[-120:]}")
+        print(f"⚠️ 推送第 {attempt+1} 次失败: {r.stderr[-150:]}")
     if r is not None and (r.returncode == 0 or "Everything up-to-date" in r.stderr):
         print("✅ 已推送到 GitHub Pages")
     else:
-        print(f"❌ 推送失败（已重试3次）: {(r.stderr[-200:] if r else '')}")
+        print(f"❌ 推送失败（已重试3次）: {(r.stderr[-200:] if r else 'timeout')}")
+        raise SystemExit(1)
 
 if __name__ == "__main__":
     main()
