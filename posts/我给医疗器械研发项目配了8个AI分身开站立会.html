@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我给医疗器械研发项目配了8个AI分身开站立会 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-09-11 · 自动生成</div>
+  <h1>我给医疗器械研发项目配了8个AI分身开站立会</h1>
+<p>周五早上，飞书里准时躺着一份站立会记录。八个角色挨个汇报了本周进展和阻塞项，末尾还自动把核心风险归拢成一份清单，格式规整，重点清楚。</p>
+<p>但这份记录不是人写的。会上一个人都没有。</p>
+<p>医疗器械研发有个尴尬的现实。一台设备从想法到拿证，要覆盖硬件、固件、算法、结构、法规、测试、UI 七八个角色。大团队一个项目配一个组，小团队里人只有两三个，剩下的角色全靠一个人兼。我这边就是，自己既做项目经理又做系统架构，硬件软件法规都得盯着。</p>
+<p>一个人闷头干还行，一到要同步进度、对齐阻塞就别扭：没人在你耳边提醒那个接口还没定，没人催你那个报警分级还没拍板，很多关键决策就悬在半空，直到快撞上节点才被翻出来。</p>
+<p>CSDN 热榜上前阵子有篇讲「会议行动项助手」的文章，解决的是会后，开完会帮你把待办跟起来。我想解决的是会前那一步：能不能让每个角色先自己把进展和阻塞想清楚，我只看结论。</p>
+<h2>思路：一个角色配一个 AI 分身</h2>
+<p>做法不复杂。给每个角色配一个独立的 AI Agent 分身，各自有人设、有记忆、有独立的模型配置。每周固定时间并行跑一轮，每个分身用一两句话报本周进展和一个阻塞项，最后自动汇总成一份 Markdown 站会记录。</p>
+<p>关键在「独立」两个字。八个分身不是把同一个人格复制八份，而是八个不同的角色视角：硬件关心的是接口和打样、软件关心的是协议和界面、质控关心的是标准和送检。同一个项目，八个视角过一遍，漏项的概率比一个人拍脑袋低得多。</p>
+<p>说明白一点，它不替代真实团队。它是给「一个人扛多个角色」这种场景当陪练：帮你把每个角色该关心的点都过一遍，把该问的问题替你问出来。</p>
+<h2>怎么搭：8 个 profile，一个脚本，一条定时任务</h2>
+<p>我用的是 Hermes 的原生 profile 分身（一个可本地或服务器部署的 Agent 框架，也支持飞书接入）。核心是三样东西。</p>
+<p>第一样，角色分身。一个角色一个独立 profile，人设写在各自的 SOUL.md 里：</p>
+<p class='table'>| 角色 | 分身 | 关注点 |</p>
+<p class='table'>|------|------|--------|</p>
+<p class='table'>| CEO / 项目经理 | mv100-ceo | 整体进度、预算、对外 |</p>
+<p class='table'>| CTO / 技术总监 | mv100-cto | 技术架构、传感器选型 |</p>
+<p class='table'>| 硬件工程师 | mv100-hw | 原理图、PCB、接口 |</p>
+<p class='table'>| 软件工程师 | mv100-sw | 固件、GUI、通信协议 |</p>
+<p class='table'>| 质量与注册 | mv100-qa | 安规、EMC、注册文档 |</p>
+<p class='table'>| 结构工程师 | mv100-struct | 堆叠、外壳、开模 |</p>
+<p class='table'>| UI/UX 工程师 | mv100-ui | 界面、交互 |</p>
+<p class='table'>| 测试工程师 | mv100-test | 测试计划、验证 |</p>
+<pre>
+# 一个角色一个 profile
+hermes profile create mv100-hw --description &quot;硬件工程师：原理图、PCB、传感器前端调试&quot;
+# 角色人设 + 固定技术选型写在 ~/.hermes/profiles/mv100-hw/SOUL.md
+</pre>
+<p>第二样，把技术选型钉死在人设里。这点是被坑出来的经验。AI 会按自己的常识编，你项目里用的是 LVGL，它能给你说成 TouchGFX；主控是 STM32H743，它能编出个 STM32U5。所以 SOUL.md 里必须把主控、GUI 框架、传感器型号一项项写死，它才不会满嘴跑火车。</p>
+<pre>
+# 给分身绑定模型（新 profile 默认没配 key，不配会直接报错）
+hermes -p mv100-hw config set providers.deepseek.base_url &quot;https://api.deepseek.com/v1&quot;
+hermes -p mv100-hw config set providers.deepseek.api_key &quot;$API_KEY&quot;
+hermes -p mv100-hw config set model.model &quot;deepseek-v4-flash&quot;
+
+# 单次提问，非交互
+hermes -p mv100-hw chat -q &quot;站立会：用1-2句话汇报本周关键进展和1个阻塞项&quot;
+</pre>
+<p>第三样，并行收集脚本加一条定时任务。脚本并行发起八个分身的提问，等一轮汇报收敛后拼成站会记录。定时任务挂着，每周五早上自动跑一次，跑完把记录推到飞书。</p>
+<pre>
+# 站立会 cron：每周五 9:00
+# 任务内执行收集脚本 → 并行问 8 个分身 → 汇总成 Markdown → 推送
+</pre>
+<p>还有个容易漏的收尾：加一条守护任务。AI 接口在早高峰偶尔会连续无响应导致这一轮跑失败，守护任务在主任务之后四十分钟检查输出，发现失败就自动重跑一遍。成功了就静默，平时完全零打扰。</p>
+<h2>踩过最狠的一个坑：分身会复读过期信息</h2>
+<p>软件和 UI 两个分身，连续三周报同一条阻塞：屏幕规格没最终确认，UI 先按 480×320 兜底。</p>
+<p>我一开始没当回事，以为项目真卡在这。后来翻项目文档才发现，屏幕早就冻结在 4.3 寸 800×480，480×320 这个数在任何文档里都查不到。</p>
+<p>根因不是模型笨，是我自己挖的坑。SOUL.md 里那句「分辨率 480×320（当前兜底）」是几个月前临时写的，屏幕定稿之后我忘了回去改。分身每周五照着 SOUL 念一遍，把兜底值当成了铁打的现状，一念念了三周，我自己反而被它带偏，差点记错屏幕尺寸。</p>
+<p>修起来很简单，把 SOUL.md 里的固定选型改成冻结口径，把「阻塞」那行清掉，下周五它就报新口径了。</p>
+<p>教训就一句：**AI 分身不会主动告诉你它说错了，它的「事实」来自你喂给它的那几行配置。** 你把中间态、兜底值写进去，它就会当铁的事实复读。中间态的决策要么别写进配置，要么写进去的同时同步更新项目文档，两边只能是一个口径。</p>
+<h2>边界：它替不掉的东西</h2>
+<p>用下来我的感受是，这套东西替掉的是「信息收集」这一步，替不掉判断。</p>
+<p>分身能把八个角色的关注点各过一遍，把阻塞项摆到我面前，把周报初稿写出来。但哪条是真阻塞、哪个决策该怎么拍、风险该怎么排优先级，还是得我自己来。它也会编，需要核对，涉及项目决策的内容一律以项目文档为准，分身的话当线索、不当结论。</p>
+<p>更重要的是，它逼着你把每个角色的职责和边界先想清楚。想不清楚，分身只会把你的混乱原样搬一遍。</p>
+<h2>写在最后</h2>
+<p>对一个人扛多个角色的小团队，这算是个低成本的开局：不用等团队配齐，先让 AI 把该问的问题替你问一遍，把该同步的信息替你收集一轮。省下来的时间，去盯那些只有人能做判断的地方。</p>
+<p>工具是陪练，判断还是自己的。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
