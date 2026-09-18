@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家用健康监测产品构想（HCP · 居家线） | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-09-17 · 自动生成</div>
+  <h1>家用健康监测产品构想（HCP · 居家线）</h1>
+<p>&gt; 定位：**家庭健康监测（非注册类）**——居家健康感知 + 自然语言交互 + 家人联动；不做诊断/治疗。</p>
+<p>&gt; 与平台线关系：复用 [[产品线统一平台规划_NCP-2|NCP-2]] 的信号前端与报警设计思想，**交互/决策层改用 [[ESP-Claw_乐鑫设备端AI-Agent框架|ESP-Claw]]（ESP32-S31）**，形成「院内 NCP / 居家 HCP」两条线。</p>
+<p>&gt; 命名草案：**HCP-100**（Home Care Platform）。</p>
+<h2>一、定位与边界</h2>
+<p class='li'>• **做**：居家体征采集、异常本地告警、家人远程感知、自然语言查询与陪伴交互。</p>
+<p class='li'>• **不做**：诊断结论、治疗干预、剂量控制——即**不进入注册器械范畴**，规避&quot;算法锁定/证据链&quot;负担。</p>
+<p class='li'>• **与 NCP 的关系**：HCP 是 NCP-2 统一平台的**居家延伸**——共用前端信号链与报警设计思路；交互/决策层引入 ESP-Claw，走&quot;设备端 Agent&quot;路线。</p>
+<h2>二、目标用户与场景</h2>
+<p class='li'>• 用户：慢病老人、术后居家康复、独居老人；核心付费/使用方常是**异地子女**。</p>
+<p class='li'>• 典型闭环：日常体征采集 → **本地规则判异常** → 本地告警 → **微信/飞书通知家人** → 家人/老人用自然语言追问（&quot;我妈昨晚血氧怎么样&quot;）。</p>
+<h2>三、产品形态（建议）</h2>
+<p class='li'>• **台式 / 床边主机**（ESP32-S31 + 小屏）：插电为主，承载 Agent 与主交互——**这是 ESP-Claw 最顺的形态**。</p>
+<p class='li'>• **传感子模块**：血氧/PPG、心电（电极）、体温、体重（可选睡眠）。</p>
+<p class='li'>• **家人端**：微信 / 飞书（直接复用 ESP-Claw 的 IM 能力，零新 App）。</p>
+<p class='li'>• **可选穿戴件**：单独选低功耗芯片，**降级为本地规则**（不强上 LLM）。</p>
+<h2>四、系统架构</h2>
+<pre>
+传感层(PPG/ECG/体温/体重)
+   │
+采集与调理（可复用 NCP-2 的 ADS129x 前端 + 桥路/NTC）
+   │
+ESP32-S31  ·  本地事件总线
+   ├─ Lua 规则引擎：阈值告警 / 联动 / 记录   → 确定性、离线可执行
+   ├─ ESP-Claw Agent：LLM 决策 + 固化 Lua    → 自然语言交互（在线）
+   │     └─ 多 Agent：监护 Agent + 对话 Agent
+   └─ MCP：设备能力对外暴露（Server）+ 调外部服务（Client）
+   │
+云/家人端：微信 · 飞书 · 可选云平台
+</pre>
+<p class='li'>• **云边协同**：**本地兜底**（Lua 规则离线跑）+ **在线增强**（LLM 交互）。</p>
+<h2>五、关键设计取舍</h2>
+<p class='table'>| 维度 | 取舍 |</p>
+<p class='table'>|------|------|</p>
+<p class='table'>| 确定性 vs 灵活 | 告警/联动**固化成本地 Lua**（不靠模型临场）；模糊需求交给 LLM |</p>
+<p class='table'>| 隐私 | **健康数据本地优先**；云端 LLM 调用**脱敏**（非注册也受《个保法》约束） |</p>
+<p class='table'>| 功耗/形态 | 主机**插电**；穿戴单列低功耗方案 |</p>
+<p class='table'>| 可靠性/QC | 关键阈值逻辑自研写死，产品责任自负（早期框架） |</p>
+<h2>六、原型路径（3 阶段）</h2>
+<p class='li'>• **P0 通路验证**：一块 ESP32-S31 / 面包板 → 浏览器**在线烧录 ESP-Claw** → 跑通「模拟传感器事件 → 本地 Lua 规则 → 微信/飞书通知」。**先不接真传感器**，验证&quot;事件→告警→家人端&quot;闭环。</p>
+<p class='li'>• **P1 最小闭环**：接真实传感（如 MAX30102 PPG / ADS129x ECG 子板）→ 阈值告警 + 自然语言问答（&quot;昨晚血氧怎么样&quot;）。</p>
+<p class='li'>• **P2 小批量**：结构/电源/外壳（宋超）；非注册也要过 **EMC / 电气安全 / 个保法** 评估。</p>
+<h2>七、选型 / BOM 雏形</h2>
+<p class='li'>• **主控**：ESP32-S31（双核 RISC-V 多协议 SoC，面向 AIoT/智能家居中枢；**≥8MB Flash + ≥8MB PSRAM** 起，跑 ESP-Claw）。</p>
+<p class='li'>• **传感**：MAX3010x（PPG/血氧）；ADS129x（ECG/EEG，可复用 [[产品线统一平台规划_NCP-2|NCP-2]] 前端）；NTC/SHT（体温）；压力/称重（体重）。</p>
+<p class='li'>• **交互**：LVGL 小屏（复用 NCP 的 GUI 思路）+ 微信/飞书。</p>
+<p class='li'>• **电源**：插电 + 后备锂电。</p>
+<h2>八、风险与对策</h2>
+<p class='table'>| 风险 | 对策 |</p>
+<p class='table'>|------|------|</p>
+<p class='table'>| ESP-Claw 早期框架、版本迭代快 | 原型阶段**锁定版本**；关键逻辑自研，不依赖生成 |</p>
+<p class='table'>| 联网依赖（LLM 用 API） | 本地兜底 + 在线增强，断网仍能告警 |</p>
+<p class='table'>| 隐私 / 个保法 | 数据本地优先、云调用脱敏、明确授权 |</p>
+<p class='table'>| 功耗（S3/P4 + PSRAM 较费电） | 主机插电；穿戴另择低功耗芯片 |</p>
+<p class='table'>| 供应链 | ESP32-S31 国产、供货稳（呼应 [[STM32_AI应用笔记|国产化]]方向） |</p>
+<h2>九、与 NCP 平台的协同</h2>
+<p class='li'>• **复用（NCP-2 已有）**：信号前端（ADS129x/桥路）、报警引擎设计思想、LVGL GUI、外壳结构。</p>
+<p class='li'>• **新增（居家线）**：ESP-Claw 交互/决策层、IM 家人联动、MCP 能力暴露。</p>
+<p class='li'>• **供应链统一**：ADS129x、电源、连接器等与院内线共用，摊薄成本。</p>
+<h2>十、下一步</h2>
+<p>1. P0 通路验证（面包板在线烧 ESP-Claw，模拟事件→微信通知）。</p>
+<p>2. 找一块 ESP32-S31 开发板实测（或先用 ESP32-S3 起步，芯片同框架）。</p>
+<p>3. 细化形态与 BOM，纳入 [[产品线统一平台规划_NCP-2|NCP-2]] 的居家产品线章节。</p>
+<p>&gt; 关联：[[ESP-Claw_乐鑫设备端AI-Agent框架]] · [[产品线统一平台规划_NCP-2]] · [[神经重症共用平台设计_NCP-1]] · [[STM32_AI应用笔记]]</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

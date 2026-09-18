@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>科研级无线多模态采集系统 · 选型与架构草图 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-09-17 · 自动生成</div>
+  <h1>科研级无线多模态采集系统 · 选型与架构草图</h1>
+<p>&gt; 目标：**无线 4×EEG + 1×ECG + 1×Resp，6 路同步采集 + 上位机实时显示**（科研级/健康级，非注册）。</p>
+<p>&gt; 关联：[[BIS-200_深度麻醉监护仪]] · [[NCP-1 神经重症共用平台设计]] · [[BCI-100 脑机接口设备]] · [[产品线统一平台规划_NCP-2]]</p>
+<h2>一、目标指标（科研级）</h2>
+<p class='table'>| 通道 | 信号 | 带宽 | 采样率(建议) | 导联/方式 |</p>
+<p class='table'>|---|---|---|---|---|</p>
+<p class='table'>| EEG ×4 | 脑电 | 0.5–70 Hz | 250–500 SPS | Fp1/Fp2/F7/F8（前额/头箍） |</p>
+<p class='table'>| ECG ×1 | 心电 | 0.05–150 Hz | 250–500 SPS | 2–3 电极 |</p>
+<p class='table'>| Resp ×1 | 呼吸 | 0.1–1 Hz | 250 SPS | 阻抗法 或 呼吸带 |</p>
+<p class='table'>| — | 分辨率 | 24-bit | — | — |</p>
+<p class='table'>| — | **同步** | 单 ADC 同源时钟 → 6 路天生对齐 | — | — |</p>
+<p class='table'>| — | 无线 | BLE 5.0（6ch×24bit×500SPS ≈ 9 KB/s，余量充足） | — | — |</p>
+<h2>二、采集端（硬件）</h2>
+<h3>2.1 生物电前端（核心二选一）</h3>
+<p class='li'>• **方案 A（推荐，一颗全包）**：**ADS1298R**（8ch / 24bit / 内置**呼吸阻抗**测量）——4×EEG + 1×ECG + 1×Resp 一块芯片搞定，BOM 最简。</p>
+<p class='li'>• 代价：EEG 噪声略逊于 ADS1299（科研级仍够用）。</p>
+<p class='li'>• **方案 B（EEG 最优）**：**ADS1299**（8ch / 24bit / 超低噪，你们现用）做 EEG+ECG；**呼吸单独**用呼吸带（应变/电感，低频直接进一路 ADC）或独立呼吸 AFE。</p>
+<p class='li'>• 代价：多一块呼吸前端 + 机械件。</p>
+<p>&gt; 建议：**先按 A（ADS1298R）验证**，模块化预留 B。</p>
+<h3>2.2 主控 + 无线</h3>
+<p class='li'>• **低噪路线（科研级常见）**：**STM32L4/H743 + nRF52840**（或 STM32WB 单芯）——采集与射频分离，噪声低。**H743 直接复用 [[NCP-1 神经重症共用平台设计|NCP-1]] 核心板**。</p>
+<p class='li'>• **单芯集成路线**：**ESP32-S3**（WiFi+BLE 一体）——省事，但射频与模拟同板，噪声/功耗需评估。</p>
+<p class='li'>• **固件**：ADS129x SPI 驱动 → 数据打包（通道+时间戳）→ BLE Notify；支持导联配置、上/下采样、阻抗自检。</p>
+<h3>2.3 其余</h3>
+<p class='li'>• **电源**：锂电 + 充电管理 + 电量计（复用 [[BCI-100 脑机接口设备|BCI-100]] 无线头环方案）。</p>
+<p class='li'>• **电极**：4×干/湿 EEG（前额头箍）+ ECG 电极 + 呼吸带/阻抗电极。</p>
+<p class='li'>• **结构**：头箍/前额贴（宋超）。</p>
+<h3>2.4 最小 BOM 雏形</h3>
+<pre>
+ADS1298R  ×1      （前端，含呼吸阻抗）
+STM32L4/H743 ×1   （主控，复用 NCP-1 核心板）
+nRF52840   ×1     （BLE） 或 STM32WB 单芯
+锂电+充电+电量计  ×1
+EEG 电极 ×4 / ECG 电极 ×2-3 / 呼吸带 ×1
+</pre>
+<h2>三、数据链路</h2>
+<pre>
+电极 → ADS129x(24bit) → STM32(SPI) → 打包(通道+时戳) → BLE → 上位机
+                                         └─ 本地缓存(SD/Flash)可选
+</pre>
+<h2>四、上位机（显示）</h2>
+<p class='li'>• **框架**：**PyQt/PySide + pyqtgraph**（高速实时波形，起步最快）或 **Qt/C++ (QML)**（产品化）。</p>
+<p class='li'>• **核心功能**：</p>
+<p>1. **6 通道实时波形**（环形缓冲，滑动窗口滚动）</p>
+<p>2. **通道/导联管理**（开关、增益、偏移、颜色）</p>
+<p>3. **数字滤波显示**（EEG 0.5–70Hz 带通 + 50Hz 陷波；ECG 0.05–150Hz；Resp 0.1–1Hz）</p>
+<p>4. **连接管理**（BLE 扫描/配对/断线重连）</p>
+<p>5. **记录与导出**（CSV / EDF，供后续算法分析）</p>
+<p>6. （可选）**阻抗/电极自检**显示、**标记/注释**</p>
+<p class='li'>• **性能**：6ch × 500SPS × 24bit ≈ 9 KB/s，PyQtGraph 轻松实时；预留多设备/多导联扩展。</p>
+<h2>五、实现路径（分阶段）</h2>
+<p class='li'>• **P0 打通数据流**：开发板 + ADS1298R 评估板（或现成 ADS129x EVM）→ 采集单通道 → BLE → 上位机出波形。</p>
+<p class='li'>• **P1 6 路同步**：接 4×EEG+ECG+Resp → 验证同步与噪声 → 上位机 6 通道实时显示 + 滤波。</p>
+<p class='li'>• **P2 可用原型**：头箍/电极/电源整合，长时记录 + CSV/EDF 导出。</p>
+<p class='li'>• **P3（可选）**：多设备同步、算法模块（伪迹去除/睡眠分期）。</p>
+<h2>六、复用与增量</h2>
+<p class='table'>| 项 | 复用 | 新增 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| 前端 | ADS1299 经验（BIS-200/BCI-100/NCP-1） | 呼吸阻抗（ADS1298R 或呼吸带） |</p>
+<p class='table'>| 主控 | NCP-1 H743 核心板 | 无线/低功耗配置 |</p>
+<p class='table'>| 无线+电源 | BCI-100 无线头环 | — |</p>
+<p class='table'>| 上位机 | 已有上位机经验 | 实时多通道 + EDF 导出 |</p>
+<h2>七、提醒</h2>
+<p class='li'>• **科研级/健康级**，不注册 → 无需算法锁定/证据链；但**电极安规、电气隔离**仍需按生物电采集惯例做。</p>
+<p class='li'>• 呼吸方案先按 ADS1298R 验证；若要更强 EEG，切 ADS1299 + 呼吸带。</p>
+<h2>系统架构图</h2>
+<p>![[科研级无线多模态采集_架构图.png]]</p>
+<p>交互版：[[科研级无线多模态采集_架构图.html]]</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
