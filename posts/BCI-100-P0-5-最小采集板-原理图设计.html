@@ -45,7 +45,7 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
 <p class='li'>• 每个电源脚 **10µF + 0.1µF 陶瓷**就近退耦；**退耦电容与芯片之间禁止打过孔**（同层就近）。</p>
 <p class='li'>• 数字回流不跨模拟回流路径（布局分区，见 §7）。</p>
 <p class='li'>• 5V 源：P0 台面验证优先用**低噪线性电源**；若只能 USB，务必 USB 隔离 + LC/铁氧体。</p>
-<p>**参考源**：用**内部基准**（CONFIG3.PD_REFBUF=1），VREFP/VREFN 只做退耦，不外加基准芯片。</p>
+<p>**参考源**：用**内部基准 4.5V**（ADS1299 内部基准，CONFIG3.PD_REFBUF=1），VREFP/VREFN 只做退耦，不外加基准芯片。</p>
 <h2>2. 完整接线表（Net → 成员）</h2>
 <p>&gt; 引脚号经 Rev A + Rev C 双源核对。**AVDD 含 pin 56**（不是 AVSS，两栏镜像图易看错）。</p>
 <h3>2.1 电源 / 地</h3>

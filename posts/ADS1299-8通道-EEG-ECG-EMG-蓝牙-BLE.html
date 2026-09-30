@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADS1299 8通道 EEG/ECG/EMG-蓝牙(BLE) 采集系统 · 开发需求评估与核心器件选型报告 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-09-29 · 自动生成</div>
+  <h1>ADS1299 8通道 EEG/ECG/EMG-蓝牙(BLE) 采集系统 · 开发需求评估与核心器件选型报告</h1>
+<h4>V3.2（修订版）｜2026-09-29｜内部技术评估（暂不对外）</h4>
+<p>&gt; 本版基于 V2.0，依据 [[ADS1299_8通道采集系统_评估与选型报告技术审查]] 修正技术错误、统一口径、补齐风险与待澄清项。**逐条修订点见文末「修订说明」。**</p>
+<p>&gt; **V3.1 更正**：导联方式改为**双极导联（8 通道差分对）**（原 EEG 单极/SRB1 及「兼容单极/双极」系客户描述有误）。</p>
+<p>&gt; **V3.2 变更**：客户为**降低功耗**，无线由 **WiFi（ESP32-C3）改为蓝牙 BLE 5.0（nRF52840）**——同步替换无线模块、连接模型、帧封装、功耗与无线认证段落。</p>
+<p>&gt; 评估依据：客户《开发需求.pptx》；TI ADS1299-x datasheet SBAS499C（Rev.C）；**Nordic nRF52840 Product Specification**；**Bluetooth 5.0（LE 2M PHY / DLE）规范**。</p>
+<p>---</p>
+<h2>执行摘要</h2>
+<p>客户需求为基于 TI ADS1299 的 8 通道生理电信号（脑电/肌电/心电）**蓝牙(BLE) 无线**采集系统。经逐项核对，**12 项核心指标均可满足或有条件满足**（其中 2 项附条件：输入噪声需增益/速率配合、频响需数字滤波专门设计）。原 1 项关键应用级矛盾（带宽 vs EMG）已定案为按信号类型动态切换：**EEG 0.5~70Hz @500SPS / EMG 10~500Hz @≥2000SPS / ECG 0.5~40Hz @500SPS**。</p>
+<p>核心选型已定案：AFE 采用 **ADS1299IPAG**（客户指定，8 通道 EEG 成熟方案）；架构采用&quot;ST + Nordic&quot;双芯片——主控 **STM32L476RGT6** + **蓝牙 BLE 5.0 模块 nRF52840**（原 WiFi 模块 ESP32-C3 退役）；电源链路 **TP4056 充电 + TPS610995 低噪升压 + 低噪模拟 LDO（供 AVDD）+ ME6217C33（供 DVDD）**（不变）。</p>
+<p>&gt; ⚠️ **进入原理图前须先闭环三项前置**：① **P4 产品定位**——由&quot;工程评估单方定案&quot;退回&quot;**待客户/法规确认**&quot;，工程侧按&quot;科研级 / 医疗级双兼容&quot;设计；② **医疗级除颤防护电阻的噪声代价**——须专项评估（见 P4 / R4）；③ **续航 ≥3h**——原测算 0.8~1.2W 临界；**随无线改 BLE，系统功耗降约一个数量级、续航大幅放宽（见第七节 / P6），该前置基本消解，仍须真机实测**。</p>
+<p>---</p>
+<h2>一、项目概述</h2>
+<p>客户需求为基于 TI ADS1299 的 8 通道生理电信号（脑电 EEG / 肌电 EMG / 心电 ECG）无线采集系统，主要形态约束如下：</p>
+<p class='li'>• **核心架构**：8 路同步采集 ADS1299 模拟前端 + MCU + **蓝牙 BLE 5.0 无线传输（GATT Notification 流）**。</p>
+<p class='li'>• **板卡尺寸与布局**：**优先 5cm×6cm**（5×5cm 为备选，正面布板紧张，见 R2）。正面布置全部主芯片（ADS1299、MCU、**BLE 芯片**）、总开关、Type-C 充电口、**8 只 3.5mm 音频插座**（穿板安装，正面 4 + 背面 4，经音频线连电极）及调试下载口（UART：GND/TX/RX/3.3V；SWD：3.3V/CLK/DIO/GND）；背面仅放锂电池（经 PH2.0 类小封装连接器插接）及少量器件。</p>
+<p class='li'>• **核心指标**：采样率 250/500/1000/2000SPS 可选（上位机指令在各档位间设定；**上位机最高档经客户定为 2000SPS**，原需求所列 4000SPS 不再作上限）；端到端延迟 &lt;20ms；通道间同步误差 &lt;1μs 并以硬件中断打时间戳；3.7V 锂电池供电带充电；**双极导联（8 通道差分对）**；输入阻抗 500MΩ（带 lead-off 口径）；最小检测信号 0.536μV（增益 1 时 1 LSB，量化分辨率）；输入参考噪声 1μVpp（70Hz 带宽，增益 24）；CMRR −110dB；SNR&gt;50dB；频率响应 0.68Hz~70Hz（以 10Hz 为基准，误差 +5%~−10%）。</p>
+<p>---</p>
+<h2>二、指标可达性逐项评估</h2>
+<p class='table'>| 序号 | 需求指标 | 实现依据 | 结论 |</p>
+<p class='table'>|---|---|---|---|</p>
+<p class='table'>| 1 | 8 路同步采集 | ADS1299 为单芯片 8 通道 24 位同步采样 ΔΣ ADC，通道间本质同时采样 | 满足，优于 &lt;1μs |</p>
+<p class='table'>| 2 | 采样率可调（上位机最高档 2000SPS） | ADS1299 支持 250~16000SPS，由 CONFIG1 的 DR 位在**离散档位**间切换（250/500/1k/2k/4k/8k/16k）；**实际上限由客户上位机最高档定为 2000SPS**（硬件可至 4k 以上，留余量） | 满足 |</p>
+<p class='table'>| 3 | **蓝牙 BLE 传输、端到端延迟 &lt;20ms** | **上位机最高档 2000SPS → 8ch×24bit×2000SPS≈0.38Mbps，加协议开销约 0.5Mbps**。**BLE 5.0（2M PHY + DLE）应用吞吐约 700kbps~1.4Mbps，从容满足**。定案 **BLE GATT 自定义 Service，Notification 推流，7.5ms 连接间隔**，端到端 &lt;20ms 可行 | 满足（BLE 已定案，带宽充裕） |</p>
+<p class='table'>| 4 | 通道间同步 &lt;1μs + 硬件中断时间戳 | ADS1299 /DRDY 引脚中断接 MCU GPIO 打时间戳 | 满足 |</p>
+<p class='table'>| 5 | 3.7V 锂电池供电带充电 | Type-C + 充电管理 + 电池保护电路 | 可行；**续航须实测验证**（P6） |</p>
+<p class='table'>| 6 | 双极导联（8 通道差分对） | ADS1299 全差分输入（INxP/INxN）构成双极导联；不使用 SRB1 单极蒙太奇 | 满足 |</p>
+<p class='table'>| 7 | 输入阻抗 500MΩ（带 lead-off 口径） | 与手册一致：lead-off 电流注入下 DC 输入阻抗 500MΩ；不带 lead-off 的 1000MΩ 为手册典型值，不作承诺口径 | 满足（口径已统一） |</p>
+<p class='table'>| 8 | 最小检测信号 0.536μV | 4.5V 基准 / 2²³ = 0.536μV，即增益 1 时 1 LSB（**量化分辨率**，非最小可检测；实际下限受噪声≈1μVpp 限制）。增益 24 时 1 LSB≈22nV | 满足（口径已澄清） |</p>
+<p class='table'>| 9 | 输入参考噪声 1μVpp（70Hz） | 手册典型值（增益 24、250SPS）。**注意**：增益 1 时约 7.6μVpp；且噪声随数据率上升——1000SPS 时约 2µVpp。**EEG 建议 250~500SPS、增益 ≥12** | 有条件满足：见左 |</p>
+<p class='table'>| 10 | CMRR −110dB | 手册最小 −110dB / 典型 −120dB；整机 CMRR 受布局、电极阻抗失配、屏蔽及**防护串联电阻公差**影响 | 满足（手册口径），需板级保障 |</p>
+<p class='table'>| 11 | SNR&gt;50dB | ADS1299 SNR≈121dB（增益 12），系统级仍远优于 50dB | 满足 |</p>
+<p class='table'>| 12 | 频响 0.68~70Hz 误差 +5%/−10% | 需数字滤波（FIR/IIR）+ 模拟前端 RC 配合设计并实测；0.68Hz 下限与基线漂移抑制需权衡 | 可实现，需专门设计验证 |</p>
+<p>**帧长建议表（BLE，10ms/帧）**：帧净荷 = 8ch×3B×(10ms×采样率) = 24B×每帧样点数。**BLE 受 ATT 单包净荷上限约束（MTU 247B + DLE 251B → 单包净荷 ≤244B）**，超长帧须分片。</p>
+<p class='table'>| 采样率 | 每帧样点 | 帧净荷 | BLE 分片（≤244B/包） |</p>
+<p class='table'>|---|---|---|---|</p>
+<p class='table'>| 250SPS | 2.5 | ≈60B | 1 包 |</p>
+<p class='table'>| 500SPS | 5 | ≈120B | 1 包 |</p>
+<p class='table'>| 1000SPS | 10 | ≈240B | 1 包（≈上限） |</p>
+<p class='table'>| 2000SPS | 20 | ≈480B | 2 包 |</p>
+<p class='table'>| 4000SPS | 40 | **≈960B** | 4 包（**上位机不启用，硬件余量**） |</p>
+<p>&gt; 均加帧头（帧序号/时间戳/CRC，约 10~16B）。**BLE 下帧按 244B 分片组合**；或缩短帧长（2~5ms）以减小单帧体积、降低时延与丢包容错成本。（原 WiFi 版&quot;单包不分片 &lt;1472B&quot;的表述在 BLE 下不成立，已换口径。）</p>
+<p>**总体结论**：除第三节列出的应用级问题外，需求指标体系与 ADS1299 能力高度匹配，方案可行；无线改 BLE 后功耗与续航显著改善。</p>
+<p>---</p>
+<h2>三、重大需求矛盾与待澄清问题</h2>
+<p class='table'>| 编号 | 等级 | 问题描述与处置 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| P1 | 已定案 | 频率响应上限 70Hz 与 EMG 应用不匹配——定案为按信号类型动态切换带宽，**并按“−3dB 带宽≈0.262×数据率”校正采样率**：EEG 0.5~70Hz（**500SPS**，−3dB=131Hz，覆盖 70Hz）/ EMG 10~500Hz（**≥2000SPS**，−3dB=524Hz，覆盖 500Hz）/ ECG 0.5~40Hz（250~500SPS）。数字滤波器组按模式切换；增益随模式固定（EEG 12/24、EMG 1~6）。**（V3.0 更正：V2.0 的&quot;EMG ≥1000SPS&quot;不成立；&quot;EEG 250~500SPS&quot;下限 250SPS 的 −3dB 仅 65Hz，不足以覆盖 70Hz。）** |</p>
+<p class='table'>| P2 | 已定案（V1.7，V3.0 校正） | 同一 8 通道硬件经软件配置分别工作于 EEG/EMG/ECG 模式。模式配置表（与 P1 联动）：**EEG=8 通道双极导联、0.5~70Hz、500SPS、增益 12/24**；**EMG=8 通道双极、10~500Hz、≥2000SPS、增益 1~6**；**ECG=其中 2 通道差分、0.5~40Hz（监护级）、500SPS、增益 6~12**。切换 = 上位机命令 → STM32 重配 ADS1299 寄存器 + 片上滤波组切换 + 帧头模式标识。**（V3.0 注：&quot;插座映射三模式通用、硬件零改动&quot;需以明确的触点映射表为前提，见 D1。）** |</p>
+<p class='table'>| P3 | 已闭环（V1.5） | 电极接口数量：客户确认插座共 **8 只（正面 4 + 背面 4）**。8 只 TRS 3 节 = 24 触点 ≥ 双极 8 通道满配 18 触点（16 电极 + BIAS + 体参考），富余 6。推荐映射：每只 TRS 对应 1 个双极通道（Tip=正、Ring=负、Sleeve 共接 BIAS/GND 总线）。硬约束：① 电极线必须定制直通线，严禁成品耳机线（内部 16Ω/600-4kΩ 阻抗网络会破坏信号与输入阻抗指标）；② 规格书标注 Tip/Ring/Sleeve 与电极对应关系。**（V3.0 注：双极导联下每 TRS 的 Tip/Ring 即该通道 INxP/INxN、Sleeve 接 BIAS(DRL)，&quot;共 Sleeve&quot;表述须按触点映射表细化，见 D1。）** |</p>
+<p class='table'>| P4 | **待客户/法规确认（V3.0 修正）** | **产品定位（是否医疗器械、是否走 NMPA 二类）属客户/公司层面的商务+法规决策，不宜由工程评估单方&quot;定案&quot;。** 工程侧按&quot;**科研级 / 医疗级双兼容**&quot;设计（V1.5 折中思路）：① 原理图按科研级 BOM，但电极入口**预留除颤防护器件封装位**（串联大功率电阻 2×10kΩ~47kΩ + 高压钳位，可 0Ω 起始填充）；② PCB 板间距/走线间距按 IEC 60601-1 的 2×MOPP 爬电留量（约 8mm）预留，避免后期改板；③ 软件按 IEC 62304 文档习惯（版本、需求追溯、验证记录）组织；④ 若客户确认为医疗，仅填充防护器件 + 走注册流程。**⚠️ 关键约束见 R4（防护串联电阻的噪声代价）。** |</p>
+<p class='table'>| P5 | 已闭环（V1.8/V1.10，**V3.2 无线改 BLE 修正**） | ① **客户已有一套现成的蓝牙(BLE)上位机软件，且可随我方模块小幅适配（大部分协议不变）**；设备端按其协议（Service/Characteristic UUID、帧格式、命令集、连接参数）对齐，仅就必要项做小幅差异对接；衍生硬前置 = **索取现有协议基线 + 明确改动项**（见 D3）；② **连接模型（BLE）**：设备作 **GATT Peripheral（从机）**广播，主机（手机/PC）作 **Central** 连接并**订阅 Notification 数据流**；多设备同屏 = 主机同时连接多台 Peripheral（BLE 实际约 ≤7 台，视主机 Central 能力），替代原 WiFi AP 默认 / STA 多设备模式；③ 加密：**BLE LE Secure Connections 配对 + 链路加密（AES-CCM）**，应用层可另叠加自有鉴权；原&quot;WPA2 + ESP32-C3 硬件 AES&quot;表述删除。 |</p>
+<p class='table'>| P6 | 已定案（V1.12，V3.0 加注，**V3.2 功耗重估**） | 续航 ≥3h、充电 ≤2h。充电 TP4056 1A 对 800mAh 约 1.2~1.5h 达标。**无线改 BLE 后，主功耗从 ESP32-C3 WiFi 连续发射（450~950mW）降到 nRF52840 BLE（射频 ~6.4mA TX@0dBm）→ 系统平均由约 0.8~1.2W 降至约 0.1~0.2W 量级，续航由约 1.5~2.5h 提升到约 15~30h 量级（视采样率/占空比，须实测）。** 连续 2000SPS（上位机最高档，~0.38Mbps）满流时 BLE 占空比略升、续航略回落；常规 EEG(500SPS) 占空比极低、续航最优。**续航 3h 仍列入设计验证硬验收项，须真机实测**；1000mAh 兜底仍建议保留。 |</p>
+<p class='table'>| P7 | 已闭环（V1.9/V1.11，V3.0 澄清） | ① 输入阻抗口径定案&quot;带 lead-off = 500MΩ&quot;；② 采样率定案为**上位机指令在 ADS1299 的离散档位（250/500/1k/2k/4k/8k/16k）间设定**，帧头回传实际采样率。采样率/模式/增益/启停统一为指令集架构，指令格式以现成上位机协议为准（索取项）。**（V3.0 澄清：V2.0&quot;无固定档位&quot;表述不准确，ADS1299 仅支持上述离散档。）** |</p>
+<p>---</p>
+<h2>四、风险清单与对策</h2>
+<p class='table'>| 编号 | 风险 | 等级 | 对策 |</p>
+<p class='table'>|---|---|---|---|</p>
+<p class='table'>| R1 | **BLE 延迟抖动/丢包（连接间隔、信道拥塞、协商不当）** | 中 | 主从双方启用 **DLE + ATT MTU≥247**；连接间隔取 **7.5ms**（低延迟）；应用层帧序号 + CRC 做丢帧检测与标记；明确主从设备能力。**注意 4000SPS 满速流(~1Mbps)接近 BLE 5.0 上限，长流须评估（见指标#3）**。 |</p>
+<p class='table'>| R2 | 5×5cm 正面布板紧张（ADS1299 + STM32L476 两颗 10×10mm QFP + **BLE 模块**（nRF52840 模块约 10×15~15×20mm），加 8 只插座、Type-C、开关、排针与天线净空区） | 高 | 优先采用 **5×6cm**；**BLE 天线区禁铺铜、远离模拟区 ≥10mm**；主芯片对角布置，插座沿板边；可评估单芯片一体化（见 5.2）省面积 |</p>
+<p class='table'>| R3 | 模拟电源噪声（升压纹波进入 AVDD） | 高 | 升压后 **低噪 LDO + 磁珠/LC 滤波**；星型接地；模拟/数字分区布局。**（V3.0 更正：AVDD 必须经后级低噪 LDO，与 5.1 选型表/电源链路统一——原 R3 与选型表不一致）** |</p>
+<p class='table'>| R4 | **医疗级除颤防护串联电阻的噪声代价** | 高 | 每电极串 10kΩ~47kΩ 大功率电阻，其**热噪声直接落在输入端**（10kΩ≈0.7µVpp、47kΩ≈1.5µVpp @70Hz），与 AFE 1µVpp 平方相加 → 光 10kΩ 已 ~1.2µVpp（超预算 20%+）。**须专项权衡**：电阻取值 / 噪声指标放宽 / 低噪设计；并复核输入阻抗与 lead-off（串联电阻增大后） |</p>
+<p class='table'>| R5 | 电极入口 ESD 与射频干扰 | 中 | 低容 ESD 阵列（&lt;1pF）+ 串联防护电阻；医疗定位时按除颤防护设计 |</p>
+<p class='table'>| R6 | 音频插座接触可靠性 | 中 | 选镀金插座、带开关检测辅助导联脱落判断；明确插拔寿命指标 |</p>
+<p class='table'>| R7 | 高采样率 + 低增益下噪声裕量不足 | 中 | 固定增益策略（EEG 增益 12/24），软件可配；噪声随数据率上升，EEG 限 250~500SPS |</p>
+<p class='table'>| R8 | 合规与注册路径 | 中 | **P4 定位待客户/法规确认**；工程侧预留防护器件位 + 按 2×MOPP 留量，两条路均可走 |</p>
+<p class='table'>| R9 | **BLE 模块认证（SRRC + BQB）** | 中 | 蓝牙模块须 **SRRC 型号核准 + Bluetooth SIG BQB**（优先选已认证模块）；自制天线净空/外壳可能使模块认证失效 → 整机须重测射频/EMC |</p>
+<p class='table'>| R10 | 防护串联电阻公差劣化整机 CMRR | 中 | 电阻按失配预算选型（配对/低公差），复核 CMRR −110dB 口径 |</p>
+<p>---</p>
+<h2>五、核心器件选型</h2>
+<h3>5.1 选型总表</h3>
+<p class='table'>| 序号 | 物料 | 推荐型号 | 厂商 | 关键参数 / 理由 | 备选 |</p>
+<p class='table'>|---|---|---|---|---|---|</p>
+<p class='table'>| 1 | 模拟前端 AFE | ADS1299IPAG（TQFP-64） | TI | 8 通道 24 位、内置 PGA（1~24）/4.5V 基准/偏置驱动/lead-off 检测；客户指定，8 通道 EEG 成熟方案；AVDD 4.75~5.25V、DVDD 1.8~3.6V | 国产在研替代待评估（**V3.0 软化**：V2.0&quot;无等效国产替代&quot;为强断言，建议记二供） |</p>
+<p class='table'>| 2 | 主控 MCU | STM32L476RGT6（LQFP-64） | ST | Cortex-M4F 80MHz、1MB Flash/128KB SRAM；SPI 主控 ADS1299；DRDY 中断打时间戳；片上 FPU 跑分模式滤波（8ch×4000SPS×128tap≈4M MAC/s，占 CPU &lt;10%）；运行功耗低于 F4，利于续航 | STM32F405RGT6（算力冗余更大） |</p>
+<p class='table'>| 3 | **蓝牙 BLE 模块** | **nRF52840 模块（如 Raytac MDBT50Q / Fanstel BT840F）** | **Nordic** | **BLE 5.0/5.3（2M PHY、DLE、+8dBm TX）；Cortex-M4F 64MHz、1MB Flash/256KB RAM、内置 DC/DC；UART/SPI 桥接主控；连接态射频电流 ~6.4mA TX(0dBm)/6.3mA RX @3V(DC/DC)——比 WiFi 低一个数量级** | nRF52832 模块（更低成本，PHY/吞吐能力须确认）/ 泰凌微 TLSR8258（国产低成本）/ 保留 ESP32-C3 仅用 BLE（零 BOM 改动，功耗居中） |</p>
+<p class='table'>| 4 | ADC 时钟 | **ADS1299 内部 2.048MHz 振荡器（CLKSEL=内部）** | — | **ADS1299 自带内部振荡器，无需外部时钟/晶振，亦不占用 MCU。**（V3.0 更正：原&quot;由 STM32L476 MCO 输出&quot;的依据——调试口 `3.3V/CLK/DIO`——实为 **SWD 调试口（SWCLK/SWDIO）**，与 ADC 时钟无关；且 MCO 会引入 MCU 时钟抖动） | 需外部时钟时用板载 2.048MHz 晶振 + 缓冲 |</p>
+<p class='table'>| 5 | 充电管理 | TP4056ES + DW01A + FS8205 | 通用 | Type-C 1A 充电 + 电池过充过放过流保护 | —（IP5306 噪声大不推荐） |</p>
+<p class='table'>| 6 | 升压 5V（AVDD 前级） | TPS610995 | TI | 低噪声升压 600mA，输出 5V | MT3608（不推荐模拟电源） |</p>
+<p class='table'>| 7 | **模拟 LDO（AVDD 后级）** | 低噪 LDO（如 TPS7A20/LP5907 级） | TI/通用 | 升压后经**低噪 LDO** 供 AVDD，抑制升压纹波，满足 1µVpp/CMRR −110dB | 与 R3/电源链路统一 |</p>
+<p class='table'>| 8 | 3.3V LDO（数字） | ME6217C33 | 微盟 | 800mA 低噪 LDO，电池直供（压差小）。**（V3.2：原选型为覆盖 ESP32-C3 WiFi 发射峰值 350mA；改 BLE 后 nRF52840 峰值仅 ~16mA(+8dBm)，800mA 严重富余 → 可换更低静态电流、小规格 LDO（如 200mA 级低 Iq）进一步增续航）** | TPS73633 / 低 Iq LDO |</p>
+<p class='table'>| 9 | DVDD 电源 | 直接采用 3.3V | — | ADS1299 DVDD 支持 1.8~3.6V，用 3.3V 省一路电源 | — |</p>
+<p class='table'>| 10 | 基准 | ADS1299 内部 4.5V 基准 | TI | 精度满足需求（**注意：ADS1299 内部基准=4.5V，非 2.4V**） | REF5045（外部 4.5V） |</p>
+<p class='table'>| 11 | Type-C 母座 | TYPE-C-31-M-12（6P 卧贴） | 通用 | 仅供电不需数据 | 16P 满针座 |</p>
+<p class='table'>| 12 | 3.5mm 音频插座 | TRS 3 节立式带开关座（PJ-313 类）×**8**（正 4 + 背 4） | 通用 | 8×3=24 触点，双极 8ch 满配 18 触点富余 6；每插座对应 1 个双极通道；带开关用于导联接入检测；配定制直通电极线 | TRRS 4 节座（如需冗余） |</p>
+<p class='table'>| 13 | 调试口 | 1.27mm/2.0mm 双排针 ×2 | 通用 | UART（3.3V/GND/TX/RX）+ SWD（3.3V/CLK/DIO/GND） | BTB 连接器 |</p>
+<p class='table'>| 14 | 总开关 | SS12D00 拨动开关 | 通用 | 侧拨、耐流 ≥0.5A | 自锁按键开关 |</p>
+<p class='table'>| 15 | 电极防护 | 每电极 2× 大功率串联电阻（10kΩ~47kΩ，取值除颤试验定）+ 高压钳位 + ESD 阵列后移 | TI/通用 | 科研级预留位、医疗级填充；患者辅助电流 &lt;10µA 由高阻串联保障。**⚠️ 串联电阻热噪声与 1µVpp 冲突，见 R4** | 专用防护阵列 IC |</p>
+<p class='table'>| 16 | 电池及连接器 | 803040 锂电 800mAh（带 PCM）+ PH2.0-2P 卧贴座 | 通用 | 3.7V；电池放背面、经小封装连接器插接（可拆卸）。**备选 103040/1000mAh（续航兜底）** | SH1.0-2P / 603048 |</p>
+<h3>5.2 MCU/无线架构定案结论（**V3.2 修订**）</h3>
+<p>无线由 WiFi 改为蓝牙后，架构由&quot;ST + 乐鑫&quot;改为 **&quot;ST + Nordic&quot; 双芯片**：**STM32L476RGT6 主控 + nRF52840 BLE 5.0 模块**。</p>
+<p class='li'>• **主控选 L4**：滤波负载仅占 CPU &lt;10%（8ch×4000SPS×128tap≈4M MAC/s），80MHz M4F 足够；L4 功耗更低利于续航；后期算法加重可升级同封装 L4+（120MHz）或回退 F405。</p>
+<p class='li'>• **无线选 nRF52840**：BLE 5.0（2M PHY + DLE）满足吞吐（常规档充裕）；**射频电流比 WiFi 低一个数量级**（nRF52840 TX 0dBm ≈ 6.4mA@DC/DC，vs ESP32-C3 WiFi 峰值 350mA），是本次换 BLE 的核心收益；UART/SPI 桥接主控。</p>
+<p class='li'>• **代价**：双芯片较单芯片多占约 1~1.5cm²（更需 5×6cm）、器件成本略增；跨芯片链路建议 UART 3~5Mbps 或 SPI。</p>
+<p class='li'>• **可选进一步优化（推荐评估）**：nRF52840 自带 Cortex-M4F@64MHz，滤波负载占 CPU ~12%（80MHz 时为 &lt;10%）→ 可评估**省掉 STM32 的单芯片一体化方案**，再降功耗/成本/面积（对 5×5cm 布板紧张有利）；代价是应用代码迁移到 Nordic SDK。</p>
+<p class='li'>• 原单芯片方案（ESP32-S3-WROOM-1）作废存档；原 WiFi 模块（ESP32-C3-MINI-1-N4）退役。</p>
+<h3>5.3 无线传输实现方案（V3.2 补充）</h3>
+<p>**结论**：采用**现成 nRF52840 硬件模组 + 自研固件**——硬件模块市面货源充足、免自行开发；**关键在固件**，必须是**自定义 GATT + BLE 5.0 高速参数**，**不能沿用通用&quot;串口透传&quot;模块**。</p>
+<p>**为什么不用通用透传模块**：通用串口透传多为 BLE 4.x / 1M PHY / 无 DLE / 固定 ~20B 小包 / 连接间隔慢，实测仅 **几 kbps~几十 kbps**，理论上限亦仅约 250~270kbps；且一般不开放 2M PHY / DLE / 连接间隔 / MTU，无法调到目标速率。本设计峰值需 **~0.5Mbps**（2000SPS×8ch×24bit≈0.38Mbps + 协议开销），通用透传达不到。</p>
+<p>**固件要点（自研，复用 BCI-100）**：自定义 GATT Service（Notification 推流）+ **LE 2M PHY + DLE（ATT MTU≥247、单包净荷 ≤244B）+ 连接间隔 7.5ms**。BCI-100 已有同构固件（notify 推流 250SPS×8ch×3B=6KB/s），本项目在其基础上调参升速即可。</p>
+<p>**四端速率要求（全链路都须 ≥0.5Mbps，任一环不足即成瓶颈）**：</p>
+<p class='table'>| 环节 | 要求 | 说明 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| AFE → 主控 | SPI（ADS1299，≥8MHz） | 确定 |</p>
+<p class='table'>| **主控 → BLE 模组** | **SPI（推荐）或 ≥921600 高速 UART** | UART 460800 baud 有效 ~400kbps 即临界，建议 SPI |</p>
+<p class='table'>| BLE 空口 | **BLE 5.0 2M PHY + DLE** | 上限 ~1.4Mbps，满足 0.5Mbps |</p>
+<p class='table'>| BLE 模组 ↔ 上位机 | **上位机 BLE 栈须支持 2M PHY + DLE** | 否则降至 1M PHY（~300~500kbps），对 384kbps 临界 → 须与客户确认 |</p>
+<p>&gt; 隐含依赖：**上位机 BLE 栈需支持 BLE 5.0 2M PHY + DLE**（并入 D3）。该能力**与上位机平台强相关**：手机 App（Android/iOS）基本无忧；**Windows PC 蓝牙栈限制较多**——可用**外置 USB BLE 5.x 适配器**（避内置网卡不确定性，但须**真支持 2M PHY** 且**实机实测吞吐**；很多只标&quot;蓝牙 5.0&quot;的 dongle 实际只跑 1M PHY）。**（已定：上位机侧采用外置 USB BLE 5.x 适配器。）**</p>
+<p>---</p>
+<h2>六、系统数据链路</h2>
+<p>**信号链**：电极 → 3.5mm 音频插座（8 只）→ ADS1299 8 通道同步采样（增益按模式固定，/DRDY 中断）→ SPI → STM32L476（DRDY 打硬件时间戳，片上分模式数字滤波，按 10ms/帧组帧 + 帧序号/CRC；**BLE 下按 ≤244B 分片**）→ UART/SPI（3~5Mbps）→ **nRF52840 BLE 5.0（GATT Notification 推流）** → 上位机（BLE Central，订阅数据流；丢帧检测标记）。</p>
+<p>**电源链**：3.7V 锂电 →（TP4056 Type-C 充电 / DW01A+FS8205 保护）→ 直供 3.3V LDO（数字域）；经 TPS610995 升压 5V → **低噪 LDO + 磁珠/LC 滤波**（模拟域，供 AVDD）。</p>
+<p>&gt; **延迟预算（V3.0 新增，V3.2 沿用）**：端到端 &lt;20ms 中，10ms/帧组帧本身占约 10ms，叠加 **BLE 连接间隔（7.5ms）与传输**后逼近上限。缓解：缩短帧长（2~5ms）、减小连接间隔或明确延迟定义边界（见 D2）。</p>
+<p>---</p>
+<h2>七、功耗与续航估算（**V3.2 重估**）</h2>
+<p class='table'>| 模块 | 典型功耗 |</p>
+<p class='table'>|---|---|</p>
+<p class='table'>| ADS1299（8 通道） | 约 40~50mW |</p>
+<p class='table'>| **nRF52840（BLE 5.0，连接态射频）** | **约 6.4mA TX@0dBm / 6.3mA RX @3V（DC/DC）；+8dBm TX ≈ 16.4mA**（原 ESP32-C3 WiFi 发射平均 约 450~950mW / 120~260mA 等效） |</p>
+<p class='table'>| STM32L476 主控 + 电源转换损耗 | 约 100~200mW + 15% 转换损耗 |</p>
+<p>**系统平均由 WiFi 方案的约 0.8~1.2W 降到约 0.1~0.2W 量级**：800mAh 电池续航**从约 1.5~2.5h 提升到约 15~30h 量级**（视采样率/占空比/连接间隔）。**原&quot;续航 ≥3h 临界&quot;问题基本消解**；主功耗转为 AFE + MCU + 跨芯片链路，而非射频。</p>
+<p>&gt; **（V3.2 注）** 续航提升幅度取决于实际数据占空比：**常规 EEG（500SPS，≈96kbps）射频占空比极低，续航最优；EMG（2000SPS，≈384kbps，即上位机最高档）居中，仍在 BLE 带宽从容范围**。以上为估算，**须真机实测**；1000mAh（103040）电池兜底仍建议保留。充电 TP4056 1A 对 800mAh 约 1.2~1.5h 达标。</p>
+<p>---</p>
+<h2>八、下一步工作建议</h2>
+<p>1. **澄清会（P4 定位 + 未确认项）**：就 P4 产品定位、以及报告中标&quot;我方默认&quot;的项（导联映射、插座触点映射、**BLE 上位机对接方式**、续航口径）与客户/法规负责人对齐，形成会议纪要。</p>
+<p>2. **专项评估**：① 医疗级防护 vs 1µVpp 噪声预算（R4）；② 续航真实占空比实测（第七节）。</p>
+<p>3. **系统方案设计与评审**：架构已定案（**STM32L476RGT6 + nRF52840 BLE 5.0**、动态带宽），重点评审分模式滤波器组、增益策略、**BLE GATT 服务定义与吞吐裕量（4000SPS）**。</p>
+<p>4. **原理图设计**：含防护器件预留位、BLE 模块及天线净空区。</p>
+<p>5. **PCB 布局**：优先 5×6cm，模拟/数字/**BLE 天线**三区严格分区，天线净空区禁铺铜。</p>
+<p>6. 打样与焊接调试。</p>
+<p>7. 指标测试与设计验证：噪声、CMRR、频响、端到端延迟、同步误差逐项实测。</p>
+<p>8. 小批量试产。</p>
+<p>&gt; 提醒：涉及医疗注册（P4）、合同与价格承诺事项，须与对应法务/商务负责人确认。**建议报告内将&quot;我方定案 / 客户确认&quot;分栏标注**，避免把&quot;我方默认&quot;误记为&quot;已闭环&quot;。</p>
+<p>---</p>
+<h2>九、医疗级与科研级方案对比</h2>
+<p>共同硬件平台（ADS1299 + STM32L476RGT6 + **nRF52840**、电源链路、动态带宽滤波）在两方案下完全一致，差异集中在防护电路、电气安全设计、软件流程与法规路径。</p>
+<h3>9.1 方案对比总表</h3>
+<p class='table'>| 维度 | 科研级方案 | 医疗级方案 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| 产品定位 | 科研/教学/实验原型，明示&quot;非医疗器械、不用于人体诊断治疗&quot; | 医疗器械（生理信号采集器），NMPA 按第二类管理 |</p>
+<p class='table'>| 法规路径 | 无注册；**SRRC 型号核准（蓝牙）+ Bluetooth SIG BQB**、CE/FCC（出口）、RoHS | NMPA 二类：产品技术要求 + 注册检验 + 体系核查；出口叠加 CE MDR / FDA 510k |</p>
+<p class='table'>| 电气安全 | 无 IEC 60601-1 强制要求 | IEC 60601-1：CF 型应用部分，患者辅助电流正常 &lt;10µA/单一故障 &lt;50µA，电介质强度 2×MOPP/4000VAC |</p>
+<p class='table'>| EMC | 常规信息类 EMC | YY 0505 / IEC 60601-1-2 全项 |</p>
+<p class='table'>| 电极入口防护 | TPD4E05U06（&lt;1pF）+ 串联 100Ω~1kΩ；无除颤防护 | 除颤防护：每电极串 2×10kΩ~47kΩ 大功率电阻 + 高压钳位，ESD 阵列后移。**⚠️ 串联电阻热噪声 &lt; 1µVpp 冲突，见 R4** |</p>
+<p class='table'>| 隔离与漏电流 | 无专项设计 | 内部电源 + 无线，电气隔离可简化；但患者辅助电流与除颤防护必须设计并逐项检验 |</p>
+<p class='table'>| 软件要求 | 一般研发流程 | IEC 62304（B 级）；涉及报警叠加 IEC 60601-1-8 |</p>
+<p class='table'>| 临床评价 | 不适用 | 生理电信号采集器多有豁免临床目录（以分类界定/法规负责人确认） |</p>
+<p class='table'>| BOM 成本影响 | 基线（防护约 2~5 元） | +30~80 元（除颤防护电阻/钳位、2×MOPP 板间距与爬电留量） |</p>
+<p class='table'>| 周期影响 | 打样到小批约 3~4 个月 | 硬件相同，注册检验+审批约 +12~18 个月 |</p>
+<p class='table'>| 典型代价 | 上市快、成本低；不能进医疗渠道 | 可进医院/医疗渠道、可宣称医疗用途；周期与体系成本高 |</p>
+<h3>9.2 推荐策略（V3.0 修正）</h3>
+<p>**P4 产品定位待客户/法规确认**，工程侧采用&quot;**科研级 / 医疗级双兼容**&quot;策略（V1.5 折中思路，较 V2.0&quot;医疗级实装&quot;更稳，避免工程评估替客户定案）：</p>
+<p class='li'>• 原理图按科研级 BOM 设计，但电极入口**预留除颤防护器件封装位**（串联大功率电阻 + 高压钳位，可 0Ω 起始填充）；</p>
+<p class='li'>• PCB 板间距/走线间距按 IEC 60601-1 的 2×MOPP 爬电要求预留（约 8mm 对地留量），避免后期改板；</p>
+<p class='li'>• 软件按 IEC 62304 文档习惯组织，不额外增加开发负担；</p>
+<p class='li'>• 客户确认为医疗后，仅填充防护器件 + 走注册流程，硬件平台不做大改。</p>
+<p>&gt; 提醒：医疗器械分类界定、注册周期与费用为工程师估算，正式立项前须由法规事务负责人确认；本节不构成对注册结果的承诺。</p>
+<p>---</p>
+<h2>十、关键待澄清清单（供澄清会）</h2>
+<p class='table'>| 编号 | 事项 | 归属 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| D1 | **插座触点映射表**（每触点 → IN±/BIAS）——双极导联，各模式共用同一映射 | 我方出图 + 客户确认 |</p>
+<p class='table'>| D2 | 端到端延迟定义（是否含上位机）+ 帧长（10ms 或缩短） | 会议确认 |</p>
+<p class='table'>| D3 | **客户现有 BLE 上位机协议基线 + 适配项**——客户软件**可随我方模块小幅调整（大部分不变）**；索取现有协议（GATT UUID/帧格式/命令集/连接参数）并明确需改项。**采样率由上位机指令设定、档位可选**（非软件写死，见 P7/D6）；**另需确认其 BLE 栈支持 2M PHY + DLE**（与上位机平台相关：手机无忧、Windows 需 BLE 5.x 适配器+实测，否则空口降至 1M PHY，见 5.3） | 客户提供 + 双方接口对接 |</p>
+<p class='table'>| D4 | P4 产品定位（科研级/医疗级） | 客户/法规确认 |</p>
+<p class='table'>| D5 | 续航的功耗口径与验证方法 | 会议确认 |</p>
+<p class='table'>| D6 | 采样率/模式/增益/启停指令集格式 | 依赖 D3 |</p>
+<p>---</p>
+<h2>附：关键 datasheet 依据</h2>
+<h4>TI ADS1299（SBAS499C Rev.C）</h4>
+<p class='li'>• **内部基准**：4.5V（VREFP = AVSS+4.5V）；AVDD–AVSS = 4.75~5.25V；DVDD = 1.8~3.6V；**内置 2.048MHz 振荡器**。</p>
+<p class='li'>• **−3dB 带宽 vs 数据率**：250→65Hz；500→131Hz；1000→262Hz；2000→524Hz；4000→1048Hz；8000→2096Hz；16000→4193Hz。</p>
+<p class='li'>• **输入参考噪声（gain=24，70Hz BW）**：250SPS ≈ 0.98µVpp（标称 1µVpp）；1000SPS ≈ 1.97µVpp。</p>
+<p class='li'>• **CMRR** −110dB（min）/−120dB（typ）；**输入偏置电流** 300pA；**增益档** 1/2/4/6/8/12/24；**数据率** 250SPS~16kSPS。</p>
+<h4>Nordic nRF52840（Product Specification）</h4>
+<p class='li'>• **无线**：Bluetooth 5.0/5.3，支持 **LE 2M/1M/500k/125k PHY**；TX 功率可编程（+8dBm ~ −20dBm）；灵敏度 −103dBm@125k / −95dBm@1M。</p>
+<p class='li'>• **射频电流（DC/DC @3V）**：TX **6.40mA @0dBm**（16.40mA @+8dBm）；RX **6.26mA** @1Mbps。</p>
+<p class='li'>• **内核/存储**：Cortex-M4F 64MHz、1MB Flash + 256KB RAM；内置 DC/DC、AES/CCM 加速、USB。</p>
+<p class='li'>• **BLE 吞吐**：**LE 2M PHY + DLE 理论应用吞吐上限约 1.4Mbps**（实测 700kbps~1.4Mbps，随连接间隔/每事件包数变化）。</p>
+<p>---</p>
+<h2>修订说明（V3.0 对照技术审查；V3.1 导联更正；V3.2 无线改蓝牙）</h2>
+<p class='table'>| # | 修订位置 | 原（V2.0/V3.1） | 改 |</p>
+<p class='table'>|---|---|---|---|</p>
+<p class='table'>| 1 | 5.1 #4 / 第六节 | ADC 时钟由 STM32 MCO 输出，依据&quot;调试口 CLK/DIO&quot; | 改用 **ADS1299 内部振荡器**；指出 CLK/DIO 是 SWD 口，与 ADC 时钟无关 |</p>
+<p class='table'>| 2 | P1 / P2 模式表 | EMG ≥1000SPS；EEG 250~500SPS | EMG **≥2000SPS**；EEG **500SPS**（按 −3dB≈0.262×速率） |</p>
+<p class='table'>| 3 | 第 2 节 #3 / 帧表 | 帧&quot;约 252B&quot; | 按采样率给帧长表；4000SPS ≈ **960B** |</p>
+<p class='table'>| 4 | R3 / 5.1 #7 / 第六节 | AVDD 直接升压+磁珠/LC（与 R3&quot;低噪 LDO 后级&quot;矛盾） | 统一为 **升压 → 低噪 LDO → AVDD** |</p>
+<p class='table'>| 5 | 第七节 / P6 | &quot;可压至 0.7~0.9W 可达标&quot; | 标注为**估计非验证**；须实测；建议 1000mAh 兜底 |</p>
+<p class='table'>| 6 | R4（新增）/ P4 / 5.1 #15 | 只提&quot;复核输入阻抗与 lead-off&quot; | 新增**防护电阻噪声预算**（10k≈0.7µVpp、47k≈1.5µVpp），标注与 1µVpp 冲突 |</p>
+<p class='table'>| 7 | 第六节（新增） | 无 | 新增**延迟预算**说明，建议缩短帧长或明确口径 |</p>
+<p class='table'>| 8 | P4 / 9.2 / 第八节 / R | &quot;医疗级实装（定案）&quot; vs &quot;预留位（P4 澄清前）&quot;自相矛盾 | 统一为 **P4 待客户/法规确认 + 工程侧&quot;双兼容&quot;** |</p>
+<p class='table'>| 9 | 执行摘要 / 第八节 | 摘要&quot;剩余 6 项待澄清&quot;；第八节仍&quot;建议召开澄清会&quot; | 同步 V3.0 状态；摘要加&quot;三项前置&quot; |</p>
+<p class='table'>| 10 | 第 1 节 | 概述&quot;4 个插座&quot; | **8 只（正 4+背 4）** |</p>
+<p class='table'>| 11 | 第 1 节 | &quot;5×5cm 或 5×6cm&quot; | **优先 5×6cm** |</p>
+<p class='table'>| 12 | D1（新增） | 无 | 新增三模式**插座触点映射表**需求 |</p>
+<p class='table'>| 13 | P7 | &quot;无固定档位&quot; | 澄清为 **ADS1299 离散档位** |</p>
+<p class='table'>| 14 | 第 2 节 #8 | &quot;最小检测信号 0.536µV&quot; | 澄清为 **增益1 的 1 LSB（量化分辨率）** |</p>
+<p class='table'>| 15 | 5.1 #1 | &quot;无等效国产替代&quot; | 软化为&quot;国产在研替代待评估 + 记二供&quot; |</p>
+<p class='table'>| 16 | R9（新增） | 无 | 新增 **ESP32-C3 模组认证有效性** 风险 |</p>
+<p class='table'>| 17 | R10（新增） | 无 | 新增 **串联电阻公差劣化 CMRR** 风险 |</p>
+<p class='table'>| 18 | P2 / 概述 / 指标#6 / P3 / D1 | 导联：EEG 单极（SRB1 参考）、「兼容单极/双极导联」 | **改为双极导联（8 通道差分对）**（客户原描述有误，V3.1 更正） |</p>
+<p class='table'>| 19 | 标题/执行摘要/第 1 节/第 6 节/第 9 节 | 无线：WiFi（ESP32-C3-MINI-1-N4，UDP） | **改蓝牙 BLE 5.0（nRF52840 模块）**（客户为降功耗，V3.2 变更） |</p>
+<p class='table'>| 20 | 5.1 #3 / 5.2 | WiFi 模块 ESP32-C3；&quot;ST + 乐鑫&quot;架构 | **BLE 模块 nRF52840；&quot;ST + Nordic&quot;架构**（含单芯片一体化优化选项） |</p>
+<p class='table'>| 21 | P5 / 第 6 节 / R1 | WiFi AP/STA、UDP、WPA2 | **BLE GATT Peripheral/Central、Notification 流、LE Secure Connections** |</p>
+<p class='table'>| 22 | 第 2 节 #3 帧表 | UDP 单包（&lt;1472B 不分片） | **BLE ATT 单包 ≤244B；2000SPS 2 包、4000SPS 4 包** |</p>
+<p class='table'>| 23 | 第七节 / P6 | 系统 0.8~1.2W，续航 1.5~2.5h | **BLE 后约 0.1~0.2W，续航约 15~30h 量级**（须实测） |</p>
+<p class='table'>| 24 | 5.1 #8 | 3.3V LDO 覆盖 WiFi 350mA 峰值 | **BLE 峰值小（~16mA），LDO 可降规格/换低 Iq 增续航** |</p>
+<p class='table'>| 25 | R9 / 第 9 节 / D3 | ESP32-C3 认证（SRRC WiFi）；UDP 上位机协议 | **BLE 模块认证（SRRC 蓝牙 + BQB）；上位机 BLE 对接** |</p>
+<p class='table'>| 26 | P5 / D3 | 上位机按&quot;UDP / 需原生 BLE 或桥接&quot;处理 | **客户已有现成蓝牙(BLE)上位机，且可按我方模块小幅适配（大部分不变）→ 设备端对其协议基线，仅做必要改动**（V3.2 补充） |</p>
+<p class='table'>| 27 | 概述/指标#2#3/帧表/P6/第七节 | 采样率上限曾按 4000SPS，且虑 4000SPS 逼近 BLE 上限 | **客户上位机最高档定为 2000SPS** → 实际上限 2000SPS，最高数据率≈0.5Mbps，BLE 5.0 从容（V3.2 补充） |</p>
+<p class='table'>| 28 | 5.3（新增） | 无 | 新增**无线传输实现方案**：现成 nRF52840 模组 + **自研固件（复用 BCI-100）**；明确**不用通用透传模块**及四端速率要求（V3.2 补充） |</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

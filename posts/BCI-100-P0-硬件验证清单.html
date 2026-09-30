@@ -53,8 +53,8 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
 <p class='table'>|------|------|------|</p>
 <p class='table'>| MCU 开发板 | STM32L4R5ZI-Nucleo（主）/**H743IIT6**（复用 NCP-1） | 提供 SPI/DRDY 时序验证 |</p>
 <p class='table'>| ADS1299 | 8ch 24-bit ΔΣ | 采集核心 |</p>
-<p class='table'>| 精密基准 | ADR4525（2.5V）或 ADS1299 内部 2.4V | 对照 |</p>
-<p class='table'>| 低噪 LDO | TPS7A49（AVDD 3.3V） | 模拟供电（与数字分开） |</p>
+<p class='table'>| 精密基准 | ADS1299 内部 4.5V（如需外部 REF5045 4.5V） | 对照 |</p>
+<p class='table'>| 低噪 LDO | TPS7A49（AVDD 5V） | 模拟供电（与数字分开；ADS1299 AVDD 需 4.75~5.25V） |</p>
 <p class='table'>| 逻辑分析仪 | ≥ 8 通道 | 看 SPI/DRDY/START |</p>
 <p class='table'>| 示波器 | ≥ 100MHz，低噪（配 1:1 探头注意容性负载） | 电源纹波、噪声 |</p>
 <h3>1.3 电极（重点，见第三节）</h3>
@@ -69,8 +69,8 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
 <h2>二、分步验证 Checklist</h2>
 <p>&gt; 每步记录：日期 / 仪器 / 原始数据（截图/CSV）/ 结论。**每步不过，不跳下一步。**</p>
 <h3>P0-1 供电与基准</h3>
-<p class='li'>• [ ] AVDD = 3.3V 低噪（纹波 &lt; 1mVpp），DVDD 独立</p>
-<p class='li'>• [ ] 内部基准 2.4V / 或外部 ADR4525 2.5V 实测偏差 &lt; 0.1%</p>
+<p class='li'>• [ ] AVDD = 5V（4.75~5.25V）低噪（纹波 &lt; 1mVpp），DVDD 独立</p>
+<p class='li'>• [ ] 内部基准 4.5V（ADS1299 内部）/ 或外部 REF5045 4.5V，实测偏差 ≤ ±0.2%（器件规格）</p>
 <p class='li'>• [ ] 上电时序核对（AVDD/DVDD/RESET 先后，按手册）</p>
 <p class='li'>• **判据**：模拟供电纹波与基准精度达标</p>
 <h3>P0-2 SPI 连通</h3>
