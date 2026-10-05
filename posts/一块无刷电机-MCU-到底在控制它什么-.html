@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一块无刷电机，MCU 到底在控制它什么？ | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-04 · 自动生成</div>
+  <h1>一块无刷电机，MCU 到底在控制它什么？</h1>
+<p>做电机控制这些年，见过的方案太多了，说点实在的。</p>
+<p>无人机、平衡车、云台、机器人，拆开看核心几乎都是「一块驱动板加一台无刷电机」。可你随便问一个工程师，这块板上的 MCU 到底在忙什么，十有八九讲不清。#电机控制</p>
+<p>🟠 先搞明白：电机为什么会转</p>
+<p>无刷电机拆开，是定子上一圈三相绕组，加转子上一圈永磁体。它转的原理很朴素：让定子产生一个「会旋转的磁场」，永磁转子就被拽着转。定子是死的，旋转磁场从哪来？靠按顺序给三组绕组换着通电。每换一次相，磁场跳一个位置，转子跟着挪一步。无刷电机的本质，就是用电子换向替代了有刷电机的机械换向。</p>
+<p>🟠 第一层：换相</p>
+<p>最原始的换相叫六步换相，也叫梯形控制。六个状态循环，每次只给两相通电，第三相悬空，靠反电动势过零判断何时切换。它简单、省算力，但代价是转矩脉动大，就是你听到的那种「哒哒」声。要让它像云台一样丝滑，就得让三相电流都变成连续的正弦波。但这只是第一步。#无刷电机</p>
+<p>🟠 第二层：把电流管住</p>
+<p>电机的转矩，几乎正比于电流。想让电机什么时候出力、出多大力，本质就是「把电流控到多少」。于是有了电流环：高速采样三相电流，和给定值比较，实时调 PWM 占空比，让实际电流紧跟目标。这一层速度要求很高，采样加控制往往要在几十微秒内跑完一轮。这也是电机控制板都爱用带高速 ADC 和专用 PWM 的 MCU 的原因。</p>
+<p>🟠 第三层：速度与位置</p>
+<p>电流管住了，转矩就管住了。再往外一层，是把转速或角度控到目标值：你让云台转到 30 度，它就得稳稳停在 30 度。这就是速度环和位置环，靠经典 PID 加反馈（编码器或估算）实现。三个环嵌套在一起，外环算目标电流，内环把电流做实，带宽一层比一层快，这就是调参的关键。#嵌入式</p>
+<p>🟠 为什么现在都上 FOC</p>
+<p>到这里，MCU 在控什么已经清楚了：它在极短时间里，把三相电流和转子位置揉在一起，实时算出下一拍 PWM 占空比。FOC 做了一件聪明事：用 Clarke 和 Park 变换，把跟着转子转的三相交流量，换算成静止坐标系下的直流量。控直流量，比追着正弦波跑容易得多，转矩也更平稳。代价是要实时算两次坐标变换，对算力有要求，但今天的 G4、F4 已经绰绰有余。#FOC</p>
+<p>🟠 一句话总结</p>
+<p>一块无刷电机，MCU 干的活浓缩成一句：**以极快的速度采样电流和位置，实时算出下一拍怎么给三相绕组通电。**往里是换相和电流环，往外是速度和位置环。理解这三层的嵌套，你就读懂了几乎所有电机控制方案的骨架。</p>
+<p>这个专题我会一路写下去，从 FOC 坐标变换、SVPWM，到无感启动和 MCU 选型，都是这种「从原理到落地」的讲法。</p>
+<p>你想先看哪一块？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
