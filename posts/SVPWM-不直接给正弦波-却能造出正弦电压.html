@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVPWM：不直接给正弦波，却能造出正弦电压 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-06 · 自动生成</div>
+  <h1>SVPWM：不直接给正弦波，却能造出正弦电压</h1>
+<p>前两期讲了 MCU 到底在控什么、FOC 的坐标变换。这一期接着往下走：算出目标电压之后，到底怎么把它「造」出来，靠的就是 SVPWM。#电机控制</p>
+<p>🟠 先看一个约束</p>
+<p>三相桥一共六个功率管，每个桥臂只有「上通」或「下通」两种状态，三个桥臂组合起来，一共就 8 种开关状态。也就是说，MCU 根本没法直接输出一个连续变化的正弦电压，它手里只有这 8 张牌。SVPWM 的聪明之处，就是靠这 8 张牌，用时间平均的方式，合成出任意方向、任意大小的电压矢量。</p>
+<p>🟠 8 种状态 = 8 个矢量</p>
+<p>把 8 种开关状态映射到 αβ 平面：其中 6 种是有效状态，对应 6 个方向、大小相等的**基础电压矢量**，围成一个正六边形；另外 2 种是三个桥臂全接上或全接下，输出电压为 0，叫**零矢量**。#无刷电机</p>
+<p>🟠 核心思路：伏秒平衡</p>
+<p>假设你要合成一个方向落在六边形里、夹在两个基础矢量之间的目标电压。做法是：在一个 PWM 周期里，用时间 t1 发第一个基础矢量，t2 发第二个，剩下的时间发零矢量，让三者的「电压乘时间」之和，正好等于目标矢量乘周期。这就是**伏秒平衡**。周期足够短，平均效果就是一个平滑的、想要多少给多少的电压矢量，正弦就是这么「拼」出来的。</p>
+<p>🟠 为什么是七段式</p>
+<p>一个周期里怎么排这些矢量，有讲究。常见做法叫**七段式 SVPWM**：一个周期被分成七段，围绕零矢量对称排布，开关次数最少，谐波也更小。排布方式直接关系到开关损耗和噪声，这是工程里很实在的一环。#FOC</p>
+<p>🟠 比 SPWM 强在哪</p>
+<p>老办法是拿一个正弦波去和三角波比较，生成 PWM，叫 SPWM，它的天花板是母线电压利用率大概只有 0.866。SVPWM 在同样母线电压下能多利用大约 15%，电压利用率逼近 1。别小看这 15%，它直接意味着同样转速下能用更低的母线电压，或者同样的母线电压下电机能跑更高转速。#嵌入式</p>
+<p>🟠 两个工程提醒</p>
+<p>第一，真实桥臂不能瞬间通断，上下管之间必须留**死区**，否则会直通炸管；死区会让实际输出略有偏差，低成本方案还常要做死区补偿。第二，SVPWM 的矢量作用时间要现算，是 FOC 里仅次于坐标变换的计算量，好在很多电机专用 MCU 有硬件支持。</p>
+<p>一句话总结：**SVPWM 用手边仅有的 8 种开关状态，靠伏秒平衡在时间上「拼」出任意电压矢量，还能比 SPWM 多榨出约 15% 的母线电压。**它和 Clarke、Park 一起，构成了 FOC 的完整骨架。</p>
+<p>下一篇讲三环控制，电流环、速度环、位置环到底先调哪个。你想先看哪块？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
