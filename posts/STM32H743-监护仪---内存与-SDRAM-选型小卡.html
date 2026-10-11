@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STM32H743 监护仪 · 内存与 SDRAM 选型小卡 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-06 · 自动生成</div>
+  <h1>STM32H743 监护仪 · 内存与 SDRAM 选型小卡</h1>
+<p>&gt; **项目归属：公司项目**（非个人产品线，与 BIS-200 / NIRS-400 / NCP-1 无关，勿混淆）。</p>
+<p>&gt; 场景：**麻醉深度（BIS，2ch）+ 脑氧（NIRS，6ch）二合一监护仪**，终态 8 通道；数据**实时存内置 SD 卡**；病例回放为**流式**；通过 **LwIP 与医院中控**交换数据；显示用**串口屏**（不占 MCU 显存）。</p>
+<p>&gt; 结论速查：**外挂 SDRAM = W9825G6KH-6（256Mbit / 32MB），为扩展预留，不改。**</p>
+<h2>一、先分清三种介质（最容易混淆）</h2>
+<p class='table'>| 数据 | 性质 | 介质 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| 病例、趋势历史、事件日志、波形存档 | 掉电保留 | **非易失**：内置 SD 卡（或 eMMC）|</p>
+<p class='table'>| 采集缓冲、处理、回放窗、串口屏队列 | 掉电可丢 | **SRAM（片内）/ SDRAM** |</p>
+<p class='table'>| 与中控的实时数据流 | 传输中 | 网络（不占长久内存）|</p>
+<p>&gt; SDRAM 是易失的，**存不了病例**；病例在 SD 卡，SDRAM 只在「调用/回放」时当工作内存。</p>
+<h2>二、数据率估算（选型的起点）</h2>
+<p class='li'>• 单通道样本：16bit=2B / 24bit=3B（ADS1299 原始为 24bit）。</p>
+<p class='li'>• `波形数据率 = 通道数 × 采样率 × 字节数`。</p>
+<p class='table'>| 配置 | 16bit | 24bit |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| 2ch @1kHz（当下）| 4 KB/s | 6 KB/s |</p>
+<p class='table'>| 8ch @1kHz（终态，上界）| 16 KB/s | 24 KB/s |</p>
+<p>&gt; 脑氧（NIRS）通道实际采样率通常低得多，真实值更小；按 1kHz 备的是上界。</p>
+<p>&gt; 网络侧压力：8ch ≤ 192 kbps &lt;&lt; 100M 以太网，**网络从来不是内存压力源**。</p>
+<h2>三、各级缓冲（全部落片内 SRAM）</h2>
+<p class='table'>| 缓冲 | 大小 | 说明 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| ETH / LwIP | ~150KB | ST 官方 H743 示例：PBUF 池 ~19KB + 堆 ~128KB，放 **D2 SRAM** |</p>
+<p class='table'>| 采集 UART RX 环（DMA）| 64~256KB | 吸收「到达 vs 处理」的时间差；8ch 用大些 |</p>
+<p class='table'>| SD 写缓冲 | 128~256KB | **吸收 SD 卡 GC/磨损均衡的写抖动**（否则丢帧）|</p>
+<p class='table'>| 串口屏 TX/RX 队列 | 8~32KB | 显示数据即用即弃，不缓存 |</p>
+<p class='table'>| 应用/任务/栈堆 | 300~500KB | BIS 频谱/双谱、NIRS 解调滤波等 |</p>
+<p>→ 片内合计 ~0.7~1.4MB，基本吃满 H743 的 ~1MB 内部 SRAM。**SDRAM 用途只剩「回放窗 + 余量」。**</p>
+<h2>四、回放窗（唯一真正占用 SDRAM 的项）</h2>
+<pre>
+回放窗(B) ≈ 回放数据率(B/s) × 窗口时长(s) × 1.5(余量)
+</pre>
+<p class='li'>• 回放模式：**流式**（边读 SD 边放）→ 窗 = 当前屏 + 前后几屏，**与病例总长无关**。</p>
+<p class='li'>• 本机型：8ch **流式** → 回放窗 **1~3MB**。</p>
+<p class='table'>| 回放模式 | 回放窗（8ch 原始）| 说明 |</p>
+<p class='table'>|---|---|---|</p>
+<p class='table'>| **流式（采用）** | **1~3MB** | 从 SD 顺序读，窗只要几屏 |</p>
+<p class='table'>| 整段预载（未采用）| = 病例时长（≤5min≈7.2MB）| 一次读完、秒级定位 |</p>
+<h2>五、补传：从 SD 读，不占 RAM</h2>
+<p>数据实时落 SD → **断网期间波形已在 SD 上** → 网络补传**直接从 SD 读重发**，**无需专门的 MB 级 RAM 补传缓存**。</p>
+<p>&gt; 前提：断网瞬间不需网络侧零间隙续传；一般补传可接受短暂延迟。</p>
+<h2>六、SDRAM 选型结论</h2>
+<p class='li'>• 需求：回放窗 1~3MB + 片内余量 → **8MB 即达标**。</p>
+<p class='li'>• **实配：W9825G6KH-6（256Mbit / 32MB，16bit，54-pin TSOP-II）**——即正点原子阿波罗 H743 的型号。</p>
+<p class='li'>• 为什么 32MB 不嫌大：</p>
+<p class='li'>• 单价几块钱，8MB↔32MB 差价可忽略；封装/引脚相同，缩不了板面；</p>
+<p class='li'>• **为扩展预留**（BIS 2ch → +脑氧 6ch = 8ch，以后还可能加 GUI / 预载回放）；</p>
+<p class='li'>• **沿用阿波罗已验证的参考设计** → FMC 引脚映射、SDRAM 时序、MPU 配置全现成，省掉自研 bring-up 的坑。</p>
+<p class='li'>• 量产/医疗注意：选**工业级温度档**（-6I 等）、关注**长期供货 + 第二货源**（IS42S16400、MT48LC16M16 同规格）。</p>
+<h2>七、铁律与坑（与容量无关，但必须守）</h2>
+<p>1. **安全相关链留片内 SRAM**：BIS 为辅助决策三类，采集→处理→报警必须走片内；SDRAM 只放回放/历史。外部存储器**不得进安全关键路径**（写进风险管理 ISO 14971 / 注册文档）。</p>
+<p>2. **DMA 可访问性**：H7 的 ETH 与 DMA1/2 **访问不了 DTCM（0x20000000）**。ETH 描述符/缓冲、采集 RX、回放 DMA 缓冲一律放 **D1 AXI SRAM（0x24000000）或 D2 SRAM（0x30000000）**。</p>
+<p>3. **缓存一致性**：SDRAM / 带 cache 区域的 DMA 缓冲要 **32 字节对齐** + 配 MPU（非缓存或 write-through）+ 收发前后维护 cache。</p>
+<p>4. **别把 ETH 缓冲放 SDRAM**：ETH 在 D2、FMC 在 D1，跨 D1↔D2 桥有延迟，100M 突发下会拖累实时性。</p>
+<h2>八、速查表</h2>
+<p class='table'>| 项 | 值 |</p>
+<p class='table'>|---|---|</p>
+<p class='table'>| 终态通道 | 2（BIS/EEG）+ 6（脑氧/NIRS）= 8 |</p>
+<p class='table'>| 数据率上界（8ch@1kHz）| 16~24 KB/s |</p>
+<p class='table'>| 网络压力 | ≤192 kbps（可忽略）|</p>
+<p class='table'>| 片内 SRAM 用途 | ETH/LwIP + 采集 RX + SD 写缓冲 + 屏队列 + 应用 |</p>
+<p class='table'>| **SDRAM 用途** | **回放窗（流式）1~3MB + 余量** |</p>
+<p class='table'>| **SDRAM 选型** | **W9825G6KH-6 · 32MB** |</p>
+<p class='table'>| 病例存储 | 内置 SD 卡（实时）|</p>
+<p class='table'>| 补传 | 从 SD 读，不占 RAM |</p>
+<p class='table'>| 显示 | 串口屏（不占 MCU 显存）|</p>
+<h2>九、项目归属</h2>
+<p>&gt; **公司项目**——与个人 IPD 产品线（BIS-200 / NIRS-400 / NCP-1 等）**无关**，切勿混淆归并。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

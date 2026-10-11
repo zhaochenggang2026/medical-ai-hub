@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三环控制：电流环、速度环、位置环，到底先调哪个？ | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-06 · 自动生成</div>
+  <h1>三环控制：电流环、速度环、位置环，到底先调哪个？</h1>
+<p>前几期讲了 MCU 到底在控什么、FOC 的坐标变换、SVPWM 怎么把电压造出来。这一期讲把它们串起来的骨架：三环控制。#电机控制</p>
+<p>🟠 三个环，三个速度</p>
+<p>电机控制里说的三环，从里到外是电流环、速度环、位置环。它们不是并列的三件事，而是**一层套一层的串级结构**：外环的输出，就是内环的目标值。</p>
+<p>🟠 最内圈：电流环</p>
+<p>电流环是最快的一环，通常跑在几 kHz 到几十 kHz。它做的事就是 FOC 的核心：让实际的 Iq、Id 跟住你给的指令，Iq 管转矩，Id 一般压到 0。因为要快，它一般就是两个 PI 控制器，配合前几期讲的坐标变换和 SVPWM。**电流环是所有环的地基，它不稳，上面全白搭。**#FOC</p>
+<p>🟠 中间圈：速度环</p>
+<p>速度环的输出，直接就是电流环的 Iq 指令：想加速，就多给一点 Iq。它比电流环慢，带宽通常只有几十 Hz。它负责的是「转多快」，不关心每相电流怎么变，那交给内环。</p>
+<p>🟠 最外圈：位置环</p>
+<p>位置环只在伺服类应用里才需要。它的输出是速度环的指令：想看住某个角度，就先算需要多大速度。它最慢，也最容易受机械负载影响。位置环做好了，才谈得上精准定位。#无刷电机</p>
+<p>🟠 调参顺序：一定是从里往外</p>
+<p>这是最容易踩坑的地方。很多人一上来就调位置环，怎么调都不稳。正确顺序是**先电流环、再速度环、最后位置环**，一环一环定下来。原因很简单：内环是外环的地基，内环没调好，外环永远在跟一个抖动的东西较劲。</p>
+<p>🟠 一个带宽原则</p>
+<p>串级控制有个经验法则：**外环的带宽，要比内环低 5 到 10 倍**。这样内外环各管各的频段，互不打架。电流环跑几 kHz，速度环就落几十 Hz，位置环再低一个量级，整个系统才稳。带宽没拉开，就会内外环互相干扰，怎么调都抖。#嵌入式</p>
+<p>🟠 两个实战提醒</p>
+<p>第一，**抗积分饱和**。电机堵转或指令突变时，PI 的积分项会一路积到底，松手时猛冲一下，必须做限幅。第二，能加**前馈**就加：比如速度环里，把已知的负载或加速度提前补进去，比纯靠反馈省力得多，响应也更快。</p>
+<p>一句话总结：**三环是串级结构，从里到外的电流环、速度环、位置环，带宽一层比一层低，调参也必须从内往外。**电流环是地基，地基不正，整栋楼都歪。</p>
+<p>下一篇讲讲电流采样的门道，单电阻、双电阻、三电阻方案到底怎么选。你想先看哪块？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

@@ -26,7 +26,8 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
   <h1>头条专题《电机控制从原理到落地》· 台账</h1>
 <p>&gt; 平台：今日头条（**新号**；旧号「阿刚131419」2026-09-23 已封禁，勿用）。</p>
 <p>&gt; 方向：嵌入式 + AI 技术向（2026-09 起停写医疗）。</p>
-<p>&gt; 形式：**文章** + **合集/专栏**（多期连载）；节奏每周 1~2 期，首发别连发。</p>
+<p>&gt; 形式：**文章 / 微头条**（多期连载）；节奏每周 1~2 期，首发别连发。</p>
+<p>&gt; ⚠️ **合集不可用（2026-10 确认）**：新号未通过**实名认证** → 头条合集功能用不了；且微头条本身也进不了合集。故本专题**不做合集挂载**，靠标题 + 话题标签串联。</p>
 <p>&gt; 选题来源：原厂 app note（ST MC SDK / TI InstaSPIN / 瑞萨 RA）+ GitHub 开源 + B站。</p>
 <h2>发布记录</h2>
 <p class='table'>| 期 | 标题 | 类型 | 链接 | 发布日 | 状态 |</p>
@@ -34,13 +35,14 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
 <p class='table'>| 01 | 一块无刷电机，MCU 到底在控制它什么？ | 文章 | https://www.toutiao.com/article/7692814258379194926/ | 2026-10-04 | ✅ 已发布 |</p>
 <p class='table'>| 02 | FOC 到底「矢量」在哪？Clarke+Park 变换一次讲透 | 微头条 | https://www.toutiao.com/w/1878216752385155/ | 2026-10-04 | ✅ 已发布 |</p>
 <p class='table'>| 03 | SVPWM：不直接给正弦波，却能造出正弦电压 | 微头条 | https://www.toutiao.com/w/1878488351479947/ | 2026-10-06 | ✅ 已发布 |</p>
+<p class='table'>| 04 | 三环控制：电流环、速度环、位置环，到底先调哪个？ | 文章 | https://www.toutiao.com/article/7695019075390521890/ | 2026-10-06 | ✅ 已发布 |</p>
 <h2>10 期规划</h2>
 <p class='table'>| 期 | 标题（头条风） | 核心要点 | 状态 |</p>
 <p class='table'>|:-:|---|---|---|</p>
 <p class='table'>| 1 | 一块无刷电机，MCU 到底在控制它什么？ | 三层控制；六步换相 vs FOC | ✅ 已发 10-04 |</p>
 <p class='table'>| 2 | FOC 到底「矢量」在哪？Clarke+Park 变换一次讲透 | 三相→αβ→dq；交流量变直流量 | ✅ 已发 10-04 |</p>
 <p class='table'>| 3 | SVPWM：不直接给正弦波，却能造出正弦电压 | 6 基础矢量+零矢量；七段式 | ✅ 已发 10-06 |</p>
-<p class='table'>| 4 | 电机三环控制：电流环/速度环/位置环，先调哪个？ | 内外环带宽差；PI 整定顺序 | 待写 |</p>
+<p class='table'>| 4 | 电机三环控制：电流环/速度环/位置环，先调哪个？ | 内外环带宽差；PI 整定顺序 | ✅ 已发 10-06 |</p>
 <p class='table'>| 5 | 有感还是无感？编码器 / Hall / 反电动势 怎么选 | 分辨率·成本·可靠性；无感原理 | 待写 |</p>
 <p class='table'>| 6 | 无感 FOC 最难的一关：零速怎么启动？ | IF 强拖 / 高频注入 / 滑模 / 龙伯格 | 待写 |</p>
 <p class='table'>| 7 | 做电机控制，MCU 怎么选？STM32 / C2000 / GD32 / 瑞萨 横评 | 算力·外设·生态·成本 | 待写 |</p>
@@ -50,9 +52,15 @@ pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:1
 <h2>封面</h2>
 <p class='li'>• 头条文章默认 16:9 横版 1920×1080；多平台复用可 3:4 竖版 1080×1440。</p>
 <p class='li'>• 第 1 期：`cover-头条-电机专题01.png`（横版）、`cover-头条-电机专题01-竖版.png`（竖版）。</p>
+<p class='li'>• 第 2 期：`cover-头条-电机专题02.png` / `-竖版.png`</p>
+<p class='li'>• 第 3 期：`cover-头条-电机专题03.png` / `-竖版.png`</p>
+<p class='li'>• 第 4 期：`cover-头条-电机专题04.png` / `-竖版.png`</p>
 <p class='li'>• 设计：深蓝科技渐变 + B 布局（居中靠下大字）+ 关键词橙色高亮；生成后视觉核对再交付。</p>
 <h2>稿件</h2>
 <p class='li'>• 第 1 期：`20261004_头条_电机控制专题01_一块无刷电机.md`</p>
+<p class='li'>• 第 2 期：`20261004_头条_电机控制专题02_FOC的Clarke与Park变换.md`</p>
+<p class='li'>• 第 3 期：`20261006_头条_电机控制专题03_SVPWM.md`</p>
+<p class='li'>• 第 4 期：`20261006_头条_电机控制专题04_三环控制.md`</p>
 <p>&gt; 相关：`_成稿池分类.md`；技能 `content-publishing-ledger` → `references/toutiao-series.md`。</p>
   <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
 </div>
