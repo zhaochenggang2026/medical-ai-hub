@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>有感还是无感？编码器、霍尔、反电动势，到底怎么选 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-11 · 自动生成</div>
+  <h1>有感还是无感？编码器、霍尔、反电动势，到底怎么选</h1>
+<p>前四期讲了 MCU 到底在控什么、FOC 的坐标变换、SVPWM 怎么造电压、三环怎么调。这一期讲一个绕不开的前提：**怎么知道转子转到哪了**，也就是位置反馈。#电机控制</p>
+<p>🟠 为什么位置这么关键</p>
+<p>上一期说过，Park 变换要一个转子电角度 θ，把交流量旋到直流量上。θ 从哪来？就是位置反馈。θ 不准，d、q 轴就摆错，整个 FOC 从根上就歪了。所以选哪种位置反馈，是电机控制方案里最先要定的事之一。</p>
+<p>🟠 三条主流路子</p>
+<p>**编码器**：增量式（ABZ）或绝对式，分辨率高、低速稳，伺服、精密定位基本都用它；代价是成本高、要机械安装，还怕粉尘油污。**霍尔**：三个霍尔传感器给出转子位置，一共 6 个状态，电气角度分辨率只有 60 度，够六步换相；要在 FOC 里用好，得在两个霍尔跳变之间插值估角度，或者只在低速用它兜底。便宜、皮实、免维护，风扇、泵、压缩机里很常见。**无感**：干脆不装传感器，靠反电动势（BEMF）观测器、滑模、龙伯格这些算法，从电压电流里把 θ 估出来。省成本、免安装、不怕脏。#无刷电机</p>
+<p>🟠 有感 vs 无感，各自的软肋</p>
+<p>有感的核心优势是**低速准、启动稳**，代价是钱、安装、和怕污染断线。无感的优势是**成本低、皮实**，但它有个死穴：**转速越低，反电动势越弱，越难估**，到零速附近基本失效。所以无感电机「站着怎么起步」是个专门的难题。#FOC</p>
+<p>🟠 怎么选（一句话版）</p>
+<p>要**精准定位、低速大扭矩、伺服**，上有感（编码器优先）。要**成本敏感、免维护、中高速**，上无感（风机、泵、压缩机）。夹在中间、既要便宜又要稳启动的，常用**霍尔加无感混合**：低速靠霍尔，高速切无感。环境脏、振动大、线缆容易断的地方，优先无感或霍尔，少用光编码器。#嵌入式</p>
+<p>🟠 两个实战提醒</p>
+<p>第一，编码器别只看分辨率，**抗污染和线缆可靠性**在工业现场更要命。第二，无感方案要清楚它在哪个速段才可靠，**别拿它硬扛零速**，那段必须另想办法。</p>
+<p>一句话总结：**位置反馈决定 FOC 的地基：编码器准但贵，霍尔便宜但粗，无感省钱但怕低速。选型就是拿「精度、成本、可靠性、速域」这四样去权衡。**</p>
+<p>下一篇专讲无感最难的关：零速怎么启动，IF 强拖、高频注入、滑模、龙伯格分别怎么回事。你想先看哪块？评论区聊聊。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
