@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>给 Agent 接了12个工具，我最怕的是出事追不到人 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-22 · 自动生成</div>
+  <h1>给 Agent 接了12个工具，我最怕的是出事追不到人</h1>
+<p>上个月给我的合规审查 Agent 接第 12 个工具那晚，我随手翻了翻调用日志。三个工具连着跑，中间改错了一份文件，我翻了半小时，都说不清是哪一步、被谁触发的。</p>
+<p>那一刻我才明白，给 Agent 加工具，难的根本不是让它会调，是**出了事能不能追到人**。</p>
+<p>🟠 第一个坑：参数校验只管形状</p>
+<p>写工具时第一反应都是加参数校验。但 schema 只能保证字段类型对、必填项在，**管不了这个参数在业务上合不合法**。传进来一个根本不存在的单号，schema 挑不出毛病，工具照样执行。校验得分两层：形状校验交给协议，**业务合法性得自己在工具里写死**。</p>
+<p>🟠 第二个坑：权限按工具分，太粗</p>
+<p>一开始我给每个工具标了权限等级，以为够了。真跑起来才发现，同一个工具，有人只能查、有人能改，**粒度得细到「谁、对哪批数据、能做什么」**。不然低权限的人绕一圈，照样能把不该动的数据动了。</p>
+<p>🟠 第三个坑：人工确认卡在哪</p>
+<p>高风险动作要人点一下再执行，思路没错。坑在于**卡点放得太晚**：等工具都跑完再让人确认，确认的就是既成事实。卡点要放在动作发生之前，还得让人看懂它要干什么，不是丢一堆 JSON 给人自己猜。</p>
+<p>🟠 第四个坑：日志不等于留痕</p>
+<p>最容易自欺欺人的一环。技术日志能告诉你调了什么，但**追责要的是可回放**：谁在什么上下文、用了什么参数、拿到什么结果、中间有没有被改过。日志是给机器看的，留痕是给人看的，两回事。</p>
+<p>🟠 工具不是越多越好</p>
+<p>接完 12 个工具我才想通：每多一个工具，就多一条要负责的路径。真正值钱的是**让每条路径都可校验、可授权、可确认、可追溯**，而不是把 Agent 武装成一个什么都能干的怪物。</p>
+<p>Agent 越能干，越要在它可能出错的地方留好把手。这不是不信任它，是给自己留一条退路。</p>
+<p>你在给 Agent 接工具时，最担心哪一步出问题？</p>
+<p>#AIAgent #MCP #SpringAI #AI工程 #审计留痕</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
