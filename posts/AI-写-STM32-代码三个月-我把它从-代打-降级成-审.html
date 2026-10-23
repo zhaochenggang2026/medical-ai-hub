@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 写 STM32 代码三个月，我把它从「代打」降级成「审查员」 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-23 · 自动生成</div>
+  <h1>AI 写 STM32 代码三个月，我把它从「代打」降级成「审查员」</h1>
+<p>🟠 **三个月前的一个凌晨一点，我盯着屏幕上一段 AI 生成的 STM32 HAL 代码，编译通过了，烧进去电机还是在抖。**</p>
+<p>代码看着全对，板子就是不听话。</p>
+<p>先说结论：**AI 写嵌入式代码，问题不是写不写得出来，是它不知道代码在硬件上会怎样。** 这三个月我把它从「代打」降级成了「审查员」，活反而干得更快。</p>
+<p>🟠 **它真正擅长的三件事**</p>
+<p>**1. 标准外设的初始化模板。** SPI、I2C、UART 的引脚配置、时钟使能、DMA 绑定，只要芯片型号给对，基本一次就准。这类代码有固定套路。</p>
+<p>**2. 跟芯片无关的工具活。** 数据解析脚本、CMake 配置、固件打包、CI 流程，原本四十分钟的活，它五分钟给一版。</p>
+<p>**3. 读手册的第一遍。** 把寄存器章节丢给它，让它先列出关键位和默认值，比自己翻几百页 PDF 快得多。但它报的地址，一定要回手册核。</p>
+<p>🟠 **它栽跟头的地方，几乎都在时间和电上**</p>
+<p>**1. 中断优先级。** 它会把两个抢同一份数据的任务配成同级中断，逻辑上没错，一跑就丢数据。中断优先级是硬件调度规则，它没有「抢占」这个概念。</p>
+<p>**2. 时序。** 它写 I2C 读传感器，中间不加等待，仿真没问题，上板就 NAK（从机不应答）。真正的约束在手册的时序图里，不在它的语料里。</p>
+<p>**3. 边界条件。** 环形缓冲区写满了怎么办、采样被高优先级打断怎么办，它默认这些不会发生。**它给的是顺风局代码，工程要的是最坏情况。**</p>
+<p>🟠 **我现在的分工**</p>
+<p class='li'>• 让它出第一版，我负责改</p>
+<p class='li'>• 中断、时序、状态机、安全相关，一律自己写</p>
+<p class='li'>• 它给的每个寄存器地址、每个延时参数，回手册核一遍</p>
+<p class='li'>• 编译报错先让它看，它八成能指出原因</p>
+<p>这么干一周，真正省下的时间比「让它全写」那阵子更多。因为返工比写代码更耗人。</p>
+<p>🟠 **最后**</p>
+<p>这行的门槛从来不是敲代码，是知道代码落到硬件上会发生什么。AI 学得会语法，学不会你桌上那块板子的脾气。</p>
+<p>把它当审查员，你省下的是敲键盘的时间。把它当代打，你付出的是排查故障的深夜。</p>
+<p>🔖 **#嵌入式开发 #AI编程 #STM32 #嵌入式工程师 #AI辅助开发**</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
