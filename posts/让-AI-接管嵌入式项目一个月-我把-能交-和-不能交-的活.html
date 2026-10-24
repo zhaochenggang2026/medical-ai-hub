@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>让 AI 接管嵌入式项目一个月，我把「能交」和「不能交」的活分清了 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-24 · 自动生成</div>
+  <h1>让 AI 接管嵌入式项目一个月，我把「能交」和「不能交」的活分清了</h1>
+<p>🟠 **九月最后一周的晚上十点，我把一个板子项目要干的活摊在纸上，一条一条标：这条能交，这条不能交。** 一个月后回头看，标错的那几条，返工花的钱比自己做还多。</p>
+<p>结论先放这儿：**AI 适合接「有标准答案」的活，不适合接「要对结果负责」的活。**</p>
+<p>它的训练语料里，大量是能编译通过的代码，很少有「这块板上电就冒烟」的现场记录。所以它擅长语法层面的正确，不擅长硬件层面可行。</p>
+<p>🟠 **第一档：整块交出去**</p>
+<p class='li'>• 协议解析、数据打包、上位机菜单这类纯软件逻辑</p>
+<p class='li'>• 编译脚本、版本打包、日志脚手架</p>
+<p class='li'>• 手册第一遍：让它先列寄存器和默认值</p>
+<p>这类活的输入输出是确定的，写错了编译器或者单元测试能接住。</p>
+<p>🟠 **第二档：交一半，我收尾**</p>
+<p class='li'>• 外设初始化，它出模板，我核时钟树和引脚复用</p>
+<p class='li'>• 状态机，它画迁移图，我补异常分支</p>
+<p class='li'>• 测试用例，它铺正常路径，我加边界值</p>
+<p>🟠 **第三档：不让它碰**</p>
+<p>**1. 跟时序有关的一切。** I2C 上电后要等多久、SPI 时钟相位怎么配、ADC 采样窗口开多长，答案在手册的时序图里，不在它的语料里。它给的延时看着都合理，上板就是 NAK（从机不应答）或者数据整体错位。</p>
+<p>**2. 中断优先级和临界区。** 它没有「抢占」这个概念。两个任务抢同一块缓冲区，它会顺手配成同级中断，逻辑上通，一跑就丢采样。</p>
+<p>**3. 上电时序和复位流程。** 电源还没稳就读 Flash、外设没复位完就发命令，这类顺序错误在仿真里几乎复现不出来，只能在示波器上看见。</p>
+<p>**4. 量产一致性。** 同一版固件烧到第一百块板子上，晶振偏差、批次差异、温漂，这些它没法替你验证。**单板跑通和批量能交，中间隔着一条鸿沟。**</p>
+<p>**5. 追溯链。** 需求、代码、测试、版本要能对上号。这是责任，不是工作量，交出去等于把签字权交出去了。</p>
+<p>🟠 **一个月后的真实感受**</p>
+<p>省下来的时间是真的，冒出来的新故障也是真的。**关键从来不是 AI 有多强，而是这条活出错的时候，责任落在谁头上。** 落在你头上的，就别整块交出去。</p>
+<p>用它更像带一个基础扎实但没上过板的实习生：给边界清楚的活，给能验证的结果，最后的字你签。</p>
+<p>🔖 **#嵌入式开发 #AI编程 #STM32 #项目管理 #AI辅助开发**</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
