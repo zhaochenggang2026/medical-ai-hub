@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 写的 STM32 代码，为什么一上板就死 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-25 · 自动生成</div>
+  <h1>AI 写的 STM32 代码，为什么一上板就死</h1>
+<p>🟠 **上周三凌晨，同事把一段 AI 生成的 STM32 代码烧进板子，上电三秒，串口一个字都没出，调试器直接停在 HardFault_Handler。** 同一段代码在电脑上编译零警告。</p>
+<p>先说结论：**AI 生成的是「让编译器满意」的代码，不是「让硬件活下来」的代码。** 它没见过你的板子，也没见过你上电那一刻时钟还挂在 16MHz 的内部 RC 上。</p>
+<p>🟠 **它通常死在这四个地方**</p>
+<p>**1. 外设时钟没开就先写寄存器。** 时钟没使能，写配置寄存器的动作会被总线丢掉。有的芯片不吭声，有的直接进 BusFault。人写代码习惯「先开 RCC 再配外设」，AI 常把顺序打乱，因为它只看语法对不对。</p>
+<p>**2. 栈溢出。** 它很爱在中断服务函数里定义大数组，一个 uint8_t buf[512]，再加两层中断嵌套，2KB 的栈就见底了。栈溢出不一定当场死，可能先踩掉旁边的全局变量，跑两小时才崩给你看。</p>
+<p>**3. 中断里调用了阻塞函数。** HAL_Delay、printf、动态内存分配，这三样放进中断，轻则卡顿，重则死锁。它分不清「这段在 main 里能跑」和「这段在中断里不能跑」。</p>
+<p>**4. 链接脚本和内存布局对不上。** 启动文件、scatter 文件它是照见过的模板抄的。Flash 和 RAM 的起始地址是多少、DMA 缓冲区要不要 32 字节对齐，这些跟着型号绑死，抄不来。</p>
+<p>🟠 **怎么一条条查出来**</p>
+<p>我的顺序固定四步，顺序不要换：</p>
+<p>1. 先读 **CFSR 和 HFSR 两个寄存器**。HardFault 的根因基本都写在这两位里，比瞎猜快得多。</p>
+<p>2. 用 **栈填充法**量水位。启动时把栈区填成 0xAA，跑完一轮 dump 出来看还剩多少，比算理论值靠谱。</p>
+<p>3. 打开 **map 文件**，看 .bss 和 .data 吃掉多少 RAM，剩下的才是栈能用的。</p>
+<p>4. 把每个中断的优先级数值打印出来，**别信注释**。</p>
+<p>这四步走完，八成的问题能定位到一行代码。</p>
+<p>🟠 **最后说一句**</p>
+<p>不是 AI 不行，是它的「正确」和我们的「正确」不是一个标准。它追求的是一次编译通过，我们要的是最坏情况下也不死。</p>
+<p>**你越清楚自己的板子会怎么坏，AI 就越像一件趁手的工具。** 那份「它会怎么坏」的清单，只能你自己一条一条攒出来。</p>
+<p>🔖 **#嵌入式开发 #STM32 #AI编程 #单片机 #调试**</p>
+<p>---</p>
+<h2>发布信息</h2>
+<p class='li'>• 发布标题：AI写的STM32代码，为什么一上板就死</p>
+<p class='li'>• 选题来源：2026-10-25 每日选题挖掘 · 最推荐第 1 个（B站）</p>
+<p class='li'>• 标签：#嵌入式开发 #STM32 #AI编程 #单片机 #调试</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
