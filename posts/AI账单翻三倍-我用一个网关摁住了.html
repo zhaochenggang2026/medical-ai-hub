@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI账单翻三倍，我用一个网关摁住了 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-26 · 自动生成</div>
+  <h1>AI账单翻三倍，我用一个网关摁住了</h1>
+<p>&gt; 小红书选题序号 111：「小团队怎么管住 AI 成本：New-API 做网关、本地 Ollama 兜底，Token 按人分发」</p>
+<p>&gt; 选题来源：2026-10-26 每日选题挖掘（CSDN 热榜 #8，最推荐第 1 个）</p>
+<p>凌晨一点半，我关掉编译窗口，顺手点开云厂商后台，看见这个月 AI 账单是上个月的三倍多。那一下手是停住的。不是付不起，是不知道钱花去哪了。</p>
+<p>后来我花了三个晚上把这笔账拆开，才发现问题不在模型贵，在我们没有一道闸门。</p>
+<p>🟠 **第一个坑：没有网关，钱是无声漏掉的**</p>
+<p>团队里每个人各自申请 key，各自配在编辑器、脚本、聊天窗口里。谁在跑长上下文、谁在半夜跑批量，没人知道。我做的第一件事是装一个统一网关，让所有请求走同一个入口。这一步本身不省钱，但它让钱第一次变得可见：哪个项目、哪个人、哪类任务，各花了多少。</p>
+<p>🟠 **第二个问题：哪些活真的必须上云**</p>
+<p>网关跑起来我才看清，七成请求是改注释、写正则、翻译报错、总结日志。这类活根本不需要最强的模型。我把它们分出去，走本地部署的小模型，机器就是手边那台带显卡的工位机。剩下三成，比如跨几十个文件的架构改造、复杂的通信协议分析，才留给云端大模型。</p>
+<p>🟠 **兜底这一层，很多人省掉了**</p>
+<p>本地模型不是万能的，长任务里它会突然卡住，或者答非所问。所以我给它配了兜底：本地超时、或者返回明显不完整，网关自动切到云端。代价是贵一点，但比任务中断重跑便宜。**兜底不是浪费，是给自动化留的缓冲。**</p>
+<p>🟠 **最后一层：Token 按人发**</p>
+<p>现在每人每月有额度，超额要说明用途。听着像管得严，其实效果反过来，大家开始主动判断这件事值不值得动用大模型。**成本控制的本质不是省钱，是让每个请求都有人负责。**</p>
+<p>如果你也在给小团队搭 AI 工具链，别一上来就比谁的模型参数大。先把闸门装上，把账看清，再谈优化。多花出去的那些钱，往往不是模型拿走的，是没人看住拿走的。</p>
+<p>#AI成本 #大模型 #Ollama #嵌入式开发 #技术管理</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
