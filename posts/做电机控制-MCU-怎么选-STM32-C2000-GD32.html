@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>做电机控制，MCU 怎么选？STM32、C2000、GD32、瑞萨横评 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-27 · 自动生成</div>
+  <h1>做电机控制，MCU 怎么选？STM32、C2000、GD32、瑞萨横评</h1>
+<p>做电机控制这些年，被问最多的问题不是算法怎么写，是「用哪颗 MCU」。答案从来不是某颗芯片最好，而是你的场景需要什么。</p>
+<p>先说一个反常识的结论：**FOC 跑不跑得动，主频不是第一位的，外设才是。** 高级定时器能不能给互补 PWM 加精确死区、ADC 能不能和 PWM 同步采样、有没有内置运放和比较器，这三样决定你能不能把电流环做稳。主频高但定时器拉胯的芯片，跑 FOC 一样费劲。</p>
+<p>🟠 一颗能跑 FOC 的 MCU，先看这四样</p>
+<p>1. 高级定时器。要能给三相互补 PWM、可编程死区、带刹车输入，还要能触发 ADC 启动。</p>
+<p>2. ADC 与采样同步。三相电流要同时采，ADC 得多路同步，最好和 PWM 中心对齐触发，避开开关噪声。</p>
+<p>3. 模拟前端。内置运放、比较器能省掉外置电路，也省掉一堆调试。</p>
+<p>4. 数与算法加速。CORDIC 算三角函数、硬件乘加、FPU 浮点，能明显降低电流环的 CPU 占用。</p>
+<p>#电机控制 里这些比「主频多少兆」实在得多。</p>
+<p>🟠 STM32：生态最厚，通用首选</p>
+<p>ST 的 G4、F3、H7 系列是这几年做 FOC 的主流。G4 有 CORDIC 和 FMAC，170MHz 做双电机都能扛；高级定时器、同步 ADC、内置运放比较器齐全。更关键的是 **ST MC SDK 成熟**，图形化配置、现成的 FOC 库、大量参考设计，新手到量产都能用。</p>
+<p>缺点是价格没有国产香，热门型号也常缺货。**学习和通用项目，STM32 是犯错成本最低的选择。**</p>
+<p>🟠 TI C2000：无感与高性能的标杆</p>
+<p>#无刷电机 里最难啃的无感 FOC，C2000 是绕不开的名字。它不是普通 MCU，是**给电机和电源专门造的 DSP**。C28x 内核加 CLA 协处理器，ePWM 模块功能极强，ADC 又多又准，还有硬件三角函数。</p>
+<p>它最值钱的是 **InstaSPIN 和 FAST 观测器**：无感 FOC 不用自己调观测器，几行配置就能跑，低速性能也好。代价是工具链（CCS）偏重、学习曲线陡、芯片价格高。**做伺服、高性能无感驱动，或者本来就在 TI 生态里，选它。**</p>
+<p>🟠 GD32：国产替代，成本敏感场景</p>
+<p>GD32 的 F3、F4 系列和 STM32 寄存器、外设高度兼容，很多板子能直接换。价格低、供货稳，国产替代里最成熟的一档。</p>
+<p>但要清醒：兼容不等于完全一致，个别外设时序、flash 等待、温度特性有差异，ST 的库也不总能直接搬。**先小批量验证，再批量替换。** 对成本敏感、又不想重学一套生态的项目，GD32 值得认真看。</p>
+<p>🟠 瑞萨 RA / RX：日系生态，工具成套</p>
+<p>瑞萨的 RA（Cortex M33/M4）和 RX 系列都有成套的电机控制方案，配 Motor Workbench 图形化调参。外设和模拟前端做得扎实，适合对可靠性、长期供货有要求的场景。</p>
+<p>生态不如 ST 广，资料偏日系风格。**如果要对接日系客户、或者已经有瑞萨供应链，用它是顺理成章的。**</p>
+<p>🟠 怎么选，一句话</p>
+<p class='li'>• 学习、通用、要快速出原型：STM32</p>
+<p class='li'>• 无缝无感、伺服、高性能：C2000</p>
+<p class='li'>• 成本敏感、国产替代、小批量可控：GD32</p>
+<p class='li'>• 日系客户、长期供货、可靠性优先：瑞萨</p>
+<p>#嵌入式 做电机，别一上来就比参数表。先想清楚你的电机是表贴还是内置、要不要无感、量产多少、团队熟哪套生态，答案基本就定了。</p>
+<p>你现在做电机用的是哪颗 MCU？选的时候最看重什么？评论区聊聊，下一期我们聊驱动器和电流采样，MOS 之外的坑都在这。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
