@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI只吃掉了嵌入式开发中间那一段 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-28 · 自动生成</div>
+  <h1>AI只吃掉了嵌入式开发中间那一段</h1>
+<p>&gt; 小红书选题序号 113：「AI把嵌入式开发的「手感」吃掉了，但只吃掉了中间那一段：拆AI接管边界」</p>
+<p>&gt; 选题来源：2026-10-28 每日选题挖掘（B站，最推荐第 2 个）；原文带医疗背景，按 2026-09 起的内容定位改写为工业控制器场景。</p>
+<p>周三下午三点，我翻一个固件工程的 Git 记录，翻到一半停住了。近三个月一多半的提交，是 AI 生成后我改两行就合进去的。我有点发愣：这三个月我到底在写代码，还是在审代码。</p>
+<p>🟠 **第一段：编码，它已经吃掉大半**</p>
+<p>一个控制器项目，外设初始化、状态机、CRC 校验、环形缓冲，以前磨两三天，现在一个下午出可编译的初稿。**AI 擅长的是模式补全，也就是「这个套路我见过很多遍」**。串口配 DMA 这一套，开源仓库里躺着几十万份，它比人背得熟。能写成模板的活，我先让它出初稿，我当审稿的。</p>
+<p>🟠 **第二段：调试和文档，也被削薄了**</p>
+<p>以前排一个偶发丢包，我要抓时序、翻对端协议、一行行加打印，一晚上。现在把错误日志和寄存器快照丢给它，它能列出七八个可疑点，其中两个往往是对的。</p>
+<p>坑在这里。它给的测试用例看着非常对，覆盖率也漂亮，可测的都是正常路径。上电瞬间的毛刺、电压跌落、对端重启，它想不到，因为它没在实验室里被这些东西咬过。</p>
+<p>🟠 **第三段：上游和下游，它吃不掉**</p>
+<p>上游是需求评审。客户说的「能自动跑就行」，背后往往是现场粉尘大、要连跑三十天、维护的人只会换保险丝。这些话它写不进需求文档，你得自己问出来。</p>
+<p>下游是验证确认。**怎么证明这一版是对的，这件事没法外包。**边界条件自己定，注入哪些故障自己选，这次改动会不会把上个版本修好的问题带回来，也要自己判断。</p>
+<p>🟠 **为什么边界正好卡在这里**</p>
+<p>AI 手上只有公开的相似代码，没有你手上这台设备的历史。上个月那台机器在客户车间死过三次机，这件事只存在你的排查笔记里。另一条是责任，每次改动要能回答谁改的、为什么改、证据在哪。**这三个问题 AI 答不了，不是能力问题，是它不在责任链上。**</p>
+<p>所以我现在的做法很土：一次开发切成三段，中间交出去，两头自己攥着。它改完必须给证据，编译日志、单元测试、关键波形，缺一条就算没做完。</p>
+<p>手感确实在变，一晚上调通一个时序的成就感少了。但我不觉得这是坏事。**AI 能替你写代码，替不了你判断代码该不该存在。**先挑一个你熟的小模块交出去试试。</p>
+<p>#嵌入式开发 #AI编程 #STM32 #固件开发 #AI边界</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
