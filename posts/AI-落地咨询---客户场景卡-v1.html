@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 落地咨询 · 客户场景卡 v1 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-30 · 自动生成</div>
+  <h1>AI 落地咨询 · 客户场景卡 v1</h1>
+<p>&gt; 用法：每张卡 = 一次客户拜访/诊断的提纲。先问 5 个问题判断「值不值得做」，再谈价格锚。</p>
+<p>&gt; 报价为锚点，按客户规模与范围 ±30% 调整。三张卡构成一条服务阶梯：评估 → 落地 → 运维。</p>
+<p>---</p>
+<h2>卡 1｜端侧 AI 上设备的可行性评估</h2>
+<p>**谁会买**：做工业设备、仪器仪表、家电、检测设备的中小企业（30~300 人）。</p>
+<p>**他真正怕的**：老板被&quot;AI 焦虑&quot;推着要上，工程师却不知道能不能跑在自己这颗 MCU 上；最怕花几十万做完发现功耗/内存/实时性根本不够。</p>
+<h4>诊断必问 5 个</h4>
+<p>1. 想让它干成什么？（分类/检测/预测/语音）——不要听&quot;智能化&quot;，要一个可验收的动词。</p>
+<p>2. 现在的主控是什么？（型号、RAM/Flash/主频、有没有 NPU）——决定是端侧还是必须上 Linux 板。</p>
+<p>3. 数据从哪来？有多少、标没标、现场能不能采？</p>
+<p>4. 实时性要求？毫秒级响应还是秒级？</p>
+<p>5. 年产量多少？决定单颗 BOM 能加几块钱。</p>
+<p>**报价锚**：可行性评估 1~2 周 / 3~6 万；POC 原型 4~8 周 / 10~30 万；量产支持按里程碑另计。</p>
+<p>**交付证据**：资源预算表（内存/算力/功耗实测）、模型精度-延迟-内存三维实测、风险清单、下一阶段路线图。</p>
+<p>**知识资产联动**：端侧 AI / TinyML / X-CUBE-AI、RK3588 端侧推理、信号处理算法库。</p>
+<p>---</p>
+<h2>卡 2｜研发流程里 AI 的合规落地（法规/质量体系）</h2>
+<p>**谁会买**：有质量体系的制造/器械企业（IEC 62304、ISO 9001、IATF 16949 场景），团队已经在用 Copilot/ChatGPT。</p>
+<p>**他真正怕的**：团队私下用 AI 写代码写文档，**不可追溯、审计不认、出事找不到责任人**。老板要效率，质量部要合规，两边打架。</p>
+<h4>诊断必问 5 个</h4>
+<p>1. 现在团队在用哪些 AI 工具？公司管不管？</p>
+<p>2. AI 生成或改过的代码/文档，走不走受控流程？</p>
+<p>3. 你们的质量体系对&quot;工具确认&quot;（tool validation）有没有要求？</p>
+<p>4. 有没有经历过飞检/审计？审计员问过 AI 相关的问题吗？</p>
+<p>5. 出问题时要能回答哪三件事：谁改的、为什么改、证据在哪？</p>
+<p>**报价锚**：现状评估 + 治理方案 2~4 周 / 5~15 万；工具链与流程落地 1~3 月 / 20~60 万；年度顾问按年签。</p>
+<p>**交付证据**：AI 使用清单与风险分级、可控流程 SOP、审计留痕方案（每次 AI 参与都可回放）、团队培训与考核。</p>
+<p>**知识资产联动**：Spring AI + MCP 合规平台（12 工具：法规/代码/测试审查）、IEC 62304 / ISO 14971、审计留痕设计。</p>
+<p>**为什么是你**：既懂 AI 工具链、又真读过器械法规、还自己搭过带&quot;人机确认+留痕&quot;的平台——这三样凑齐的人极少。</p>
+<p>---</p>
+<h2>卡 3｜存量文档/报告的 AI 结构化（私有 RAG）</h2>
+<p>**谁会买**：制造/器械企业，堆着大量 PDF 手册、SOP、检验报告、图纸、法规文件。</p>
+<p>**他真正怕的**：知识锁在老员工脑子里，新人上手慢；找一份旧检验报告要翻半天；法规文件全靠 Ctrl+F；数据涉密不敢上公有云。</p>
+<h4>诊断必问 5 个</h4>
+<p>1. 有多少文档？什么格式？有多少是扫描件/图片？</p>
+<p>2. 更新频率多高？谁来维护？</p>
+<p>3. 涉不涉密？能不能接受私有化部署？（不能上云 = 本地模型）</p>
+<p>4. 现在谁在回答&quot;这个东西在哪、怎么规定的&quot;？——通常是几个老员工。</p>
+<p>5. 找到之后，要不要能引用原文、能追到出处？（可溯源是刚需还是加分项）</p>
+<p>**报价锚**：知识库 POC 2~4 周 / 5~10 万；生产部署 1~2 月 / 15~40 万；运维按年。</p>
+<p>**交付证据**：检索准确率评测报告、引用可溯源（答案带原文出处）、权限方案、更新维护流程。</p>
+<p>**知识资产联动**：RAG 引用对齐、PaddleOCR（扫描件/图片报告）、本地部署（Ollama/vLLM）、私有化与权限。</p>
+<p>---</p>
+<h2>怎么用这三张卡</h2>
+<p>1. **拜访前**：看客户属于哪类，带对应的卡，只问&quot;诊断必问&quot;那 5 个，别讲技术。</p>
+<p>2. **第一次不谈报价**，只谈&quot;我诊断完给你一页纸判断值不值得做&quot;。第二次再报价。</p>
+<p>3. **每次交付后回填**：客户行业、真实报价、成交/流失原因、他最后买的到底是哪个痛点——这张卡就变成了你的私有成交模型。</p>
+<p>4. 三张卡可以组合卖：先卡 1 评估，评估完大部分客户会问&quot;那这些历史文档怎么办&quot;→ 接卡 3。</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>

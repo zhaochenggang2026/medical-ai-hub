@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI真正接管的不是写代码，是烧录和调试 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-30 · 自动生成</div>
+  <h1>AI真正接管的不是写代码，是烧录和调试</h1>
+<p>&gt; 小红书选题序号 115：「AI 接管的不是写代码，是烧录和调试：我搭的嵌入式 AI Agent 技能库拆解」</p>
+<p>&gt; 选题来源：2026-10-30 每日选题挖掘（B站同类 6.2 万播放，最推荐第 1 个）。纯嵌入式技术向，已剥离医疗题材。</p>
+<p>周五晚上十一点，板子第七次上电后还是没反应。串口刷出一行乱码，指示灯常亮不闪。我盯着屏幕，手指已经放在复位键上，心里那股烦躁很熟悉：又要开始一晚上的试探了。</p>
+<p>🟠 大家都以为 AI 在写代码这一层接管了</p>
+<p>写代码确实是 AI 最显眼的地方。可真正把一个功能从「能编译」推到「能跑」，靠的是后面那一长串重复动作：编译、烧录、看日志、改一行、再烧。我以前一个晚上能走二十多遍，走完人是麻的。</p>
+<p>🟠 我把这套动作做成了循环，交给 AI 值守</p>
+<p>拆开看只有三件事。第一件是把烧录动作脚本化，用 OpenOCD（开源的芯片烧录调试工具）跑命令，不再靠手点 IDE 的按钮。第二件是把串口日志结构化，让它自动回读、按关键字切段，报错和重启原因直接提出来。第三件是失败自动重试并留证据，每次烧录的时间戳、日志、hex 文件都能对上。</p>
+<p>🟠 技能库不是一堆提示词，是几个能落地的脚本</p>
+<p>真正让我省力的不是教 AI 写代码，是把我自己的操作习惯写成文档：这块板子用哪个接口（SWD 就是芯片上那两根调试线）、烧完要等多久、日志里哪几句是纯噪声。写清楚之后，它才能按同一套手法反复执行。**工具链的门槛不在模型多聪明，在于你有没有把动作拆到它能执行的程度。**</p>
+<p>🟠 但是，它看不到波形</p>
+<p>两个坑我踩过。一次它连着烧了五遍同一个旧 hex，路径写错了，代码对、文件错，这种错它自己完全不觉得有问题。另一次它读得懂日志，读不懂现象：电源纹波、时钟抖动、焊点虚接，这些只能人上示波器。**AI 擅长在确定的规则里跑得快，不擅长判断规则本身错了。**</p>
+<p>所以我不太信「AI 自动完成开发」这种说法。它接管的是一段一段的等待，那些无聊又必须守在旁边的时刻。判断还在人手里，只是你可以把椅子挪开一会儿了。</p>
+<p>#嵌入式开发 #AI工具 #STM32 #调试 #效率</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
