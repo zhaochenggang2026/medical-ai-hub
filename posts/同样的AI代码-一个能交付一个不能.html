@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>同样的AI代码，一个能交付一个不能 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-10-31 · 自动生成</div>
+  <h1>同样的AI代码，一个能交付一个不能</h1>
+<p>&gt; 小红书选题序号 116：「我用 AI Agent 写 STM32 代码：两个项目，两套完全不同的用法」</p>
+<p>&gt; 选题来源：2026-10-31 每日选题挖掘（最推荐第 1 个）。原选题涉及专业交付场景，已按 2026-09 起的内容定位改写为量产交付项目，只保留技术内核。</p>
+<p>深夜十一点半，我把最后一段 AI 生成的代码烧进那块三十几块的开源板，串口一开，数据稳稳往外吐。我笑了一下。可十二个小时前，白天那份交付项目里，几乎一模一样的代码，我一行没留，全删了重写。</p>
+<p>🟠 同一个模型，两套完全不同的用法</p>
+<p>先说晚上。开源板、自己玩的项目，我从需求到寄存器全让 AI 打头阵。外设初始化、DMA 环形缓冲、状态机骨架，它几分钟出一版，我烧进去看现象，不对就改提示词再来。错了顶多是板子重启，代价是一杯咖啡。</p>
+<p>再说白天。量产交付的项目，同一段初始化代码我不让它直接进主干。不是不信它的水平，是这段代码后面挂着一整条链：需求条目、评审记录、变更影响分析、谁在什么时间改了什么。AI 生成的东西进这条链，得有人签字。</p>
+<p>🟠 真正卡住 AI 的不是能力</p>
+<p>它写的定时器配置、中断优先级、CRC 校验，比刚入行两年的人还稳。卡住的地方在于，量产出问题时要能倒查。**一行代码背后必须站着一个能负责的人，而 AI 不能签字。** 所以我把它的产出降级成草稿，草稿可以快，但必须先过我这一关。</p>
+<p>🟠 我现在的三层分法</p>
+<p>第一层，可以放心交给 AI：外设初始化、通信协议解析、日志格式化、单元测试用例。这类有标准答案，写错编译器和测试会当场抓住。</p>
+<p>第二层，只当参考：中断服务函数、DMA 和缓冲区的配合、低功耗时序。这类跟具体芯片的勘误手册强相关，AI 会自信地给出手册里根本没有的写法，必须逐行对着数据手册核。</p>
+<p>第三层，自己写：安全相关的保护逻辑、喂狗策略、掉电保存。这类错了不是重启就能恢复，可能是一批板子返修。</p>
+<p>🟠 说句实在话</p>
+<p>我不觉得有什么「AI 绝对不能碰的领域」，只有「没人负责的地方不能交给 AI」。开源板上我敢全权放手，是因为后果我自己扛；交付项目里我收着手，也是因为后果得有人扛。**同一个工具，边界不在模型，在责任落在谁头上。**</p>
+<p>如果你也在两种项目之间来回切，别急着比谁的 AI 更强。先想清楚这一段代码出了事，谁来签字。想明白这一句，用法自然就分开了。</p>
+<p>#嵌入式开发 #STM32 #AI编程 #固件开发 #工程师成长</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
