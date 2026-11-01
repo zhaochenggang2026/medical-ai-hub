@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI写STM32，编译过了才是坑的开始 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-01 · 自动生成</div>
+  <h1>AI写STM32，编译过了才是坑的开始</h1>
+<p>&gt; 小红书选题序号 117：「AI写嵌入式代码的真实边界：我用Claude Code跑STM32三个月的踩坑复盘」</p>
+<p>&gt; 选题来源：2026-11-01 每日选题挖掘（最推荐第 2 个）。原选题为通用嵌入式场景，本文只保留技术内核。</p>
+<p>深夜一点，编译窗口跳出 0 Error。我松了口气，抓过调试器点下载，板子一连上，串口刷出来的全是乱码。三天前我也这样松过气，只不过那一次数据是错的，还错得很安静。</p>
+<p>🟠 编译通过只证明语法没错</p>
+<p>让 AI 写 STM32 代码，半小时就能给我一整套外设初始化。串口、SPI、定时器、DMA，寄存器配置写得比我翻手册快得多。问题在于，**编译器只认语法，不认你手上这块板子的实际情况**。引脚复用冲突、时钟树配错、DMA 通道和别的外设撞车，它照样能写出一份看起来很专业的代码，然后顺利编译通过。</p>
+<p>🟠 三个月里最常踩的三类坑</p>
+<p>第一类，时序参数对不上。它给 SPI 写了个分频值，注释还标着「约 10MHz」。我按总线时钟一算，实际只有 5.6MHz，中间少算了一步。**凡是带时间单位的数字，我一律拿手册或示波器重算**，不认注释。</p>
+<p>第二类，中断优先级想当然。它把串口接收中断配成最高优先级，理由写的是「实时性要好」。真跑起来，高频数据一进来，主循环的定时任务全被顶掉，连喂狗都差点赶不上。</p>
+<p>第三类，寄存器位编造。芯片勘误手册里补充过说明的那几位，它照样按「标准写法」给。**HAL 库能覆盖的部分它基本不出错，一旦要碰裸寄存器，必须逐位对数据手册。**</p>
+<p>🟠 真正救我的不是提示词</p>
+<p>后来我搭了一套最小验证流程，每一步都很土，但管用。</p>
+<p>第零步，一次只让它写一个外设。跑通了再下一个。一次性要五个模块，出了错根本不知道从哪儿查。</p>
+<p>第一步，硬件在环。每改一处立刻烧进去看现象，串口打点、逻辑分析仪抓波形。**它没有板子，我有，这一步外包不出去。**</p>
+<p>第二步，把真实反馈贴回去。逻辑分析仪抓到的时序图、串口打印的报错、编译器的警告原文，一股脑给它。它读反馈的能力很强，比我坐着猜它错在哪快得多。</p>
+<p>🟠 三个月后我的结论</p>
+<p>它确实砍掉了我一半的重复劳动。外设初始化、协议解析、日志格式化这些活，我现在基本不手写。但它不会替你理解硬件。</p>
+<p>**AI 帮你写的是代码，帮你省的是工期，唯独替不了你对这块板子的判断。** 那部分得自己盯着示波器一点点攒。刚开始这么用时，别急着让它写整套系统，从一个外设、一块板子、一根线试起，坑会少很多。</p>
+<p>#嵌入式开发 #STM32 #AI编程 #ClaudeCode #固件开发</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
