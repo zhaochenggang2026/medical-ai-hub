@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>把YOLO塞进单片机，我踩了5个坑 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-02 · 自动生成</div>
+  <h1>把YOLO塞进单片机，我踩了5个坑</h1>
+<p>&gt; 小红书选题序号 118：「把 YOLO 塞进 MCU：端侧 AI 部署踩过的 5 个坑（X-CUBE-AI 实测）」</p>
+<p>&gt; 选题来源：2026-11-02 每日选题挖掘（最推荐第 3 个）。</p>
+<p>晚十点，板子上的摄像头终于出图了，框每两秒跳一下。模型确实跑起来了，帧率 0.5 fps。我把分析报告翻出来，推理只占 38 毫秒，剩下两秒全花在别的地方。这五个坑，我前后搭进去三个周末。</p>
+<p>🟠 坑一，先看算子清单，别先改网络</p>
+<p>X-CUBE-AI 不是万能翻译器，它有明确的算子支持表。我第一次把带自定义激活和复杂后处理的模型丢进去，工具直接报不支持，只能回退到 CPU 执行，速度掉到个位数帧。**换工具之前先翻清单，再决定要不要改网络结构。** 人话就是，菜刀能切的菜才算你的菜。</p>
+<p>🟠 坑二，量化掉点不是均匀的</p>
+<p>float32 压到 int8，权重被压扁，细节最先牺牲。整体精度可能只掉两个点，但你真正在意的小目标、低对比度目标，掉的可能是二十个点。**校准集别拿公开数据集的随机图，用你自己场景里最难的那几百张。** 掉得太狠时把首尾两层留在浮点，通常能救回来不少。</p>
+<p>🟠 坑三，内存要看两个数字</p>
+<p>报告里 weights 和 activations 是两回事。权重能放到外部 Flash，激活缓冲必须待在片内 RAM，一个字节都跑不掉。我一开始只盯着权重，以为塞得下，链接时 RAM 直接爆了。**先算 activations 的峰值，那个数字才是真正的天花板。**</p>
+<p>🟠 坑四，前后处理才是大头</p>
+<p>模型推理 38 毫秒，整个流程两秒。中间那段是取图、缩放、归一化、解码和 NMS。**你测的推理时间常常只覆盖中间一小段，前后两头才是吃掉帧率的真凶。** 预处理能交给摄像头和 DMA，后处理先用简单阈值粗筛，别一上来就跑完整 NMS。</p>
+<p>🟠 坑五，只测平均，没测最坏</p>
+<p>平均帧率好看不代表能上线。内存峰值、缓存抖动、偶发的长帧，都会在真实场景里冒出来。**连续跑半小时，记最慢的那一帧，不是最快的那一帧。**</p>
+<p>五个坑踩完，我的顺序变成了：先确认算子，再确认精度，然后算内存，最后抠前后处理。反过来做，时间基本白花。端侧部署难的地方从来不是把模型跑起来，是让它在最差的那一帧也稳得住。你卡在哪一步，留言说下，我大概都踩过。</p>
+<p>#嵌入式开发 #STM32 #端侧AI #模型部署 #X_CUBE_AI</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
