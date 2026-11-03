@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI写了80%的固件谁来签字？ | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-03 · 自动生成</div>
+  <h1>AI写了80%的固件谁来签字？</h1>
+<p>&gt; 小红书选题序号 119：「AI Agent 写了80%的代码，医疗设备的 IEC 62304 文档谁来签字」（已剥离医疗外壳，只保留技术内核）</p>
+<p>&gt; 选题来源：2026-11-03 每日选题挖掘（最推荐第 3 个）。</p>
+<p>周五晚上十一点，Agent 在终端里跑了七分钟，给我吐出 1200 行代码：传感器驱动、自定义协议解析、串口和 DMA 初始化。编译零告警，板子一次点通。周一评审，同事只问一句：这段谁写的，为什么这么写，出问题谁负责。我卡住了。</p>
+<p>🟠 它擅长的是有答案的事</p>
+<p>Agent 最稳的三块是样板驱动、协议编解码、外设配置。寄存器手册怎么写它就怎么写，错了一眼能看出来。真正省时间的是它不知疲倦，一个 16 字节报文能补齐所有校验分支。**它把已经有答案的事做快，不是把没答案的事做对。**</p>
+<p>🟠 坑都埋在时序里</p>
+<p>我被咬得最狠的三次，全在中断和时序。一次它把两百微秒的计算塞进中断服务函数，逻辑全对，负载一高就丢帧。一次重试写成死循环，超时判断放在循环外面，通信一断就再也出不来。一次初始化顺序反了，时钟没配好就去开外设，冷启动十次挂三次。**这些错编译器和静态分析都不一定报，因为它们不是语法错，是时序和边界的错。** 代码本身没病，是它在真实世界里站不住。</p>
+<p>🟠 评审看证据，不看 diff</p>
+<p>我的流程固定成四条：一次只动一个模块，提交小到能看懂；静态分析清零，MISRA 规则开着跑，编译器告警当错误；台架测试注入异常，断电、拔线、错误帧都跑一遍；构建脚本和二进制一起入库，锁版本。**能跑是必要条件，能复现才是交付条件。** 三个月后必须还能一模一样地编出来。</p>
+<p>🟠 有三个环节我没让它闭环</p>
+<p>需求怎么拆、失效模式怎么分析、最后谁放行。它可以给我列十种可能的失效，但选哪一种当主线得我自己判断。**AI 能把速度提上来，签字的动作还是人的。**</p>
+<p>现在我的用法很简单：让它写，让它跑，让它把每段在干什么解释一遍，然后我挑毛病。提交信息里注明哪几段是生成的、我改了哪里。不是形式主义，是三个月后我还能看懂自己交付了什么。</p>
+<p>#嵌入式开发 #AI编程 #固件开发 #代码评审 #ClaudeCode</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
