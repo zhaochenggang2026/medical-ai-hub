@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STM32接大模型，先算这三笔账 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-04 · 自动生成</div>
+  <h1>STM32接大模型，先算这三笔账</h1>
+<p>&gt; 小红书选题序号 120：「STM32接DeepSeek是炫技还是架构错配，MCU到底该不该碰大模型」（纯技术向，未涉及行业应用）</p>
+<p>&gt; 选题来源：2026-11-04 每日选题挖掘（最推荐第 1 个）。</p>
+<p>周三晚上十点，做工业网关的朋友发来一张截图：STM32F4 上跑通了 DeepSeek，串口打印出一句&quot;你好，我是AI&quot;。他问，这东西能不能装进我们下一版产品。我没答，先问他一句：内存还剩多少。他沉默了半分钟。</p>
+<p>🟠 先看清跑通的是什么</p>
+<p>翻一遍那些高播放的教程，MCU 干的事只有三件：驱动 WiFi 模块、拼一个 HTTP 请求、把返回的 JSON 打到串口。真正的推理在云端机房，板子上跑的是字符串。**这不是在 MCU 上跑大模型，是让 MCU 打了个电话。** 这件事有价值，但它属于通信，不属于 AI 部署，两件事的成本结构完全不同。</p>
+<p>🟠 三笔账算完就清醒</p>
+<p>第一笔内存。想在片内跑哪怕 1B 参数的模型，4bit 量化后也要 500MB 上下，而 STM32 的 SRAM 是 1MB 这个量级，中间差三个数量级，不是优化能补的。第二笔延迟。一次云端调用 800ms 到 3s，弱网时上不封顶，而工业设备的控制周期按毫秒算。第三笔钱。一台设备每天 200 次调用，token 费加流量费，一年下来常常比主控芯片本身还贵。**算力可以借，响应时间和账单借不来。**</p>
+<p>🟠 断网那天才是分界线</p>
+<p>我见过的落地项目，客户最后真正留下的功能都很朴素：本地关键词识别、固定意图分类、异常状态语音提示。这些用 CMSIS-NN 跑几十 KB 的模型就够，响应 20ms，拔了网线照常工作。**云端负责不确定的语言，端侧负责不能出错的动作。** 界划在这里，团队里的争吵基本就停了。</p>
+<p>🟠 我的土办法</p>
+<p>一句话能答完、答错也不致命的功能，放云上；动作必须准时、失败要能兜底的功能，留本地；卡在中间的，先写降级路径，网断了退回本地规则，让用户感知不到。**先写降级逻辑，再写联网逻辑，顺序反了产品就会在弱网里丢人。**</p>
+<p>那次我们最后把模型放在 App 里，板子只管采集和执行。他后来说，这个决定帮他省了半年的扯皮。技术选型难的不是能不能做，是敢不敢不做。</p>
+<p>#嵌入式开发 #STM32 #端侧AI #大模型 #物联网</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
