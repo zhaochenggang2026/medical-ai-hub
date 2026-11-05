@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会用AI的人很多，能独立交付的很少 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-05 · 自动生成</div>
+  <h1>会用AI的人很多，能独立交付的很少</h1>
+<p>凌晨一点四十，我把第七版原理图存盘，顺手点开一个视频，标题是「AI之后，红利已经结束了」。评论区吵成一片，我关掉页面上床，脑子里想的却是另一件事：为什么我认识的几个朋友，AI 用得比我还熟，却一个产品都没交付出去。</p>
+<p>🟠 会用 AI 和能交付，中间隔着一条很宽的沟</p>
+<p>短视频里的路径很诱人：十分钟把模型跑到开发板上，一行命令生成整个驱动，AI 帮你把代码写完。这些我都试过，确实能省掉大量重复劳动。</p>
+<p>但省下来的时间，最后几乎都花在了别的地方。</p>
+<p>🟠 沟在哪：demo 只跑一次，产品要跑几年</p>
+<p>一块板子在桌上跑通，只要满足一个条件：此刻它没错。而产品要满足的是一整套条件。</p>
+<p>**算力边界**：模型在电脑上推理一次 40 毫秒，塞进 128KB RAM 的 MCU，量化一压，精度掉多少，你得自己算。</p>
+<p>**环境边界**：实验室 25 度恒定，现场可能是零下 20 度到 60 度，旁边还有电机、继电器、开关电源在制造干扰。</p>
+<p>**资源边界**：量产时采购换了一颗等效料，时序差 3 微秒，你的通信就开始丢帧。</p>
+<p>**责任边界**：出了问题，得有人能说清楚是哪一行代码、哪一次验证、哪一份记录。AI 不签字。</p>
+<p>🟠 所以超级个体到底强在哪</p>
+<p>不是工具用得多新，而是**一个人能把上面四类边界都收进自己的判断里**。</p>
+<p>会用 AI，只是把查手册、写驱动骨架、生成测试脚本、整理文档这些动作变快了。真正决定能不能交付的，是你知不知道余量还剩多少，哪一步必须先验证，哪一份记录将来必须拿得出来。</p>
+<p>工具让你跑得更快，边界感决定你会不会掉沟里。</p>
+<p>🟠 想往这个方向走，可以这样开始</p>
+<p>第一，选一个能完整跑完的小产品，哪怕只是一块带通信的采集板，从选型、画板、写固件、测试到文档，全部自己走一遍。</p>
+<p>第二，每做完一步写一页记录：为什么这样选，验证了什么，还剩什么风险。这一页往往比代码值钱。</p>
+<p>第三，让 AI 参与，但把它放在你判断的下游。它出方案，你做取舍。</p>
+<p>不用急着证明自己会用多少工具。能把手里的东西完整交付一次，那种踏实感工具给不了，也没人能替你拿。慢慢来。</p>
+<p>#嵌入式 #AI #STM32 #产品落地 #工程师成长</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
