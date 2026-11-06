@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>参数全对上了，为什么还是不敢换 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-06 · 自动生成</div>
+  <h1>参数全对上了，为什么还是不敢换</h1>
+<p>去年十月的一个周三下午，评审会上我把两颗 MCU 的对照表投到屏幕上，主频、Flash、RAM、外设数量一行行对下来，绿色打满。采购问了一句「那就换？」，会议室安静了两秒，没人接话。</p>
+<p>🟠 参数表为什么既骗不了人，也救不了人</p>
+<p>datasheet 上那些数字，是单颗、常温、实验室条件下的标称值。标称值的意思是：只要不出意外，它就该对。</p>
+<p>可工程里的意外，基本都在意料之外。</p>
+<p>🟠 不敢换的四笔账，没有一笔写在参数表上</p>
+<p>**批次一致性**：第一批样片跑得很漂亮，第二批回来 ADC 零点偏了三个 LSB，也就是最小刻度跳了三格。你要自己拉分布曲线，才知道这是个别还是普遍。</p>
+<p>**长期供货**：说好的十年供货，第三年悄悄换 die（芯片里面的那层硅片），勘误表不主动通知你。</p>
+<p>**调试链路**：ST-Link 换成本厂工具，断点偶发失效、烧录时好时坏、搜不到任何一条社区回答。人话就是：出问题时，你身后没有第二个人能问。</p>
+<p>**责任边界**：换料之后出的任何问题，复测、认证、返修、客户投诉，全部算在你头上。</p>
+<p>🟠 所以我现在的顺序是：先算风险，再算参数</p>
+<p>写一张四列的风险表。这一项如果出问题，会不会影响功能；能不能在样品阶段测出来；测出来要多长时间；最坏情况谁承担。</p>
+<p>四列填完，换不换基本自己就浮出来了，不用在会上争。</p>
+<p>还有一个更实用的办法：**先用国产料做非关键通道**，比如人机界面、日志存储、外壳灯效，关键回路留一版兼容封装，双 BOM 并行跑六个月。让现场数据替你签字，比谁的嘴硬都管用。</p>
+<p>国产替代从来不是立场问题，是风险定价问题。账算清楚了，换也踏实，不换也踏实。慢慢来。</p>
+<p>#嵌入式 #STM32 #国产芯片 #硬件工程师 #选型</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
