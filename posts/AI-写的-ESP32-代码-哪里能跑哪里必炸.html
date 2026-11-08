@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 写的 ESP32 代码，哪里能跑哪里必炸 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-08 · 自动生成</div>
+  <h1>AI 写的 ESP32 代码，哪里能跑哪里必炸</h1>
+<p>上周一开始，我给自己定了个规矩：连续七天，ESP32-S3 上的每一段新代码都先让 Codex 和 Claude 写，我只负责上板验证。到第三天凌晨，串口吐出来的全是乱码，逻辑分析仪上一根时钟线在抖，我盯着屏幕愣了半天，那种感觉不是生气，是有点后背发凉。</p>
+<p>🟠 先说它能跑的部分，比你想的多</p>
+<p>引脚初始化、I2C 扫描、UART 收发、JSON 组包、日志分级，这些基本一句话就能拿到可用代码。原因很简单：这类代码网上有几十万份几乎一样的写法，它见过的比你多。哪怕是把传感器读数打包成 MQTT 报文，十分钟的活它两分钟给完，改两个宏就能编译。**这部分确实是净赚。**</p>
+<p>🟠 第一类必炸：时序它没有体感</p>
+<p>它特别爱在中断服务函数里写延时。人话解释：中断是 CPU 被打断去处理急事，你在里面原地等，整个系统就跟着卡住，别的中断全在门外排队。我那块板上，它给按键中断加了 20 毫秒消抖，结果 SPI 采样直接丢帧。**能编译，能跑，数据是错的**，这种最难查。</p>
+<p>🟠 第二类必炸：FreeRTOS 的规矩它只记一半</p>
+<p>ISR 里直接调 xQueueSend，而不是 xQueueSendFromISR。人话：中断里用的队列函数必须带 FromISR 后缀，否则会破坏调度器内部状态，表现是偶发死机，重启就好，下次不知道什么时候再来。它还会在中断里 printf，串口打印是阻塞的，轻则丢字符，重则看门狗复位。它写得那么顺手，是因为示例代码里到处都是。</p>
+<p>🟠 第三类必炸：低功耗醒来后，外设是假活的</p>
+<p>进 light sleep 再醒来，它默认所有外设状态都还在。实际是 I2C 总线可能停在半截，从机以为自己还在传输。我第一次遇到时读回来一直是 0xFF，查了两个小时。**代码里没有一行是错的，错的是芯片此刻的真实状态。**</p>
+<p>🟠 还有一类不是 bug，是幻觉</p>
+<p>它会把别的型号的外设写进来。ESP32-S3 有 USB OTG，C3 没有，它照样给你生成初始化代码，编译直接报未定义。**它不知道你手上是哪块板子，它只知道哪种写法最常见。**</p>
+<p>🟠 我的用法，一共四条</p>
+<p>给它 datasheet 的关键页，别只给型号。让它一次只改一个函数，别让它重构整个工程。编译错误贴回去，修这个它很强。所有跟时序、中断、低功耗相关的地方，自己拿示波器过一遍。</p>
+<p>最后说一句：AI 在这件事上不是替代谁，它把查手册、搭骨架的时间省下来，让你有精力去啃真正的难点。**它写得快，但只有你知道板子上到底发生了什么。**</p>
+<p>🔖 #嵌入式开发 #ESP32 #AI编程 #FreeRTOS #端侧开发</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
