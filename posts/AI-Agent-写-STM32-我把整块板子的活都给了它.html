@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent 写 STM32，我把整块板子的活都给了它 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-09 · 自动生成</div>
+  <h1>AI Agent 写 STM32，我把整块板子的活都给了它</h1>
+<p>三周前，我把一块 STM32G474 的工业控制板整个丢给 AI Agent 写，从空工程开始，我只写需求和验收标准。第一周结束，我把它改过的文件翻了一遍，心情有点复杂：它确实能用，但跟我一开始以为的&quot;能用&quot;，差得挺远。</p>
+<p>🟠 先纠正一个误解：它不是会写代码，是会拼装</p>
+<p>Agent 干活的方式，是把公开资料里的成熟写法，按你给的上下文重新拼一遍。人话解释：像个记性极好、看过几万份例程，但从没亲手在板子上跑过一次的实习生。**所以它强在覆盖率，弱在真实感。**</p>
+<p>🟠 这些活可以整段交给它</p>
+<p>CubeMX 配置的解释、HAL 初始化骨架、串口和 CAN 的报文组包解包、状态机框架、单元测试、接口注释，这些它做得又快又稳，我基本只做编译和旁路核对。改编译错误它尤其强，把报错原文贴回去，两三轮就能收敛。**重复度越高的代码，它越可靠。**</p>
+<p>🟠 卡住我的四个地方</p>
+<p>一是时序。上电顺序、外设复位后的寄存器默认值、DMA 和中断谁先谁后，它写得很顺，但没有任何体感，编译通过、运行不报错、数据悄悄偏了。</p>
+<p>二是跨文件一致性。你改了顶层一个宏，它不会主动去找另外三个文件里跟着变的常量，除非你把工程结构讲清楚。</p>
+<p>三是硬件实体。原理图上的上拉电阻、晶振频率、器件批次，它一概不知道，会按最通用的写法给你。</p>
+<p>四是调试现场。示波器上的波形、逻辑分析仪抓的那一小段时序，它读不到，只能听我用文字描述。**这一步的质量，取决于你描述得有多准。**</p>
+<p>🟠 我的实际分工</p>
+<p>骨架和重复代码全给它，时序、中断、低功耗我自己写、自己测，需求拆解和验收标准必须我自己定。这个比例不是固定的，但有一条线很硬：**它负责把已知的东西写快，我负责判断哪些东西还没被验证。**</p>
+<p>🟠 四条不翻车的用法</p>
+<p>给它 datasheet 关键页和原理图网络名，别只给型号。一次只让它改一个函数，禁止&quot;重构整个工程&quot;。每次改动立刻编译，再上板跑最小用例。让它写验收清单，你去执行，顺序反了就容易出事。</p>
+<p>我不觉得这是在替代谁。它把查手册、抄例程的时间省下来了，省下的时间正好拿去啃那些真正要盯板子的部分。**它写得再快，也替不了你在板子前多待的那十分钟。**</p>
+<p>🔖 #嵌入式开发 #STM32 #AI编程 #AIAgent #端侧开发</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
