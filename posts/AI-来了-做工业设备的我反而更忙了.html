@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 来了，做工业设备的我反而更忙了 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-10 · 自动生成</div>
+  <h1>AI 来了，做工业设备的我反而更忙了</h1>
+<p>昨天晚上十一点，我蹲在实验室给一块工业采集板改驱动，旁边手机上正放着那条很火的视频《AI后嵌入式已经凉了》。评论区里一片&quot;准备转行&quot;。我抬头看了一眼示波器上刚调稳的那条波形，心里只有一个念头：这半年我的活，怎么反而更多了。</p>
+<p>🟠 那个视频说对了一半</p>
+<p>它说的&quot;凉&quot;，指的是搬运型的活凉了。查手册、抄例程、拼外设初始化、按模板写串口收发，这些 AI 几分钟就能给一版，而且比你熬夜时写的还整齐。**这部分是真凉了，凉得还挺快。** 如果你的日常工作全是这些，被替换只是时间问题，这一点别自我安慰。</p>
+<p>🟠 但它漏掉了一件事</p>
+<p>大模型本质是跑在服务器上的概率计算，要落到一台真实设备里，中间还隔着一大段路：算力够不够、内存从哪挤、模型怎么量化、量化之后精度掉多少、采样和推理怎么错开、断电重启之后状态怎么恢复。人话解释：模型在电脑上是一个文件，在设备里是一道必须按时交出结果的工序。</p>
+<h4>这段路 AI 自己走不了，因为它摸不到板子。</h4>
+<p>🟠 我这半年的活，反而更杂了</p>
+<p>以前是把传感器数据采上来、算一算、送出去，闭环很短。现在要在同一条链路上塞进一个神经网络推理，原来的时序全部要重排：采样窗口得避开推理峰值，DMA 搬运要和计算错开，Flash 里给模型留的那块区域要重新规划。**每加一个 AI 功能，底下的实时性就要重新论证一遍。**</p>
+<p>还有一件更麻烦的：模型换一版，行为就变了。你没法像以前那样靠&quot;代码没改动&quot;来说服自己没问题，得把边界用例重新跑一遍。这块目前基本没有趁手的工具，全靠人一点点搭。</p>
+<p>🟠 所以我的判断是</p>
+<p>凉的不是嵌入式，是&quot;只会照着写&quot;的那部分。真正缺的，是能把一个不确定的东西装进一个必须确定的系统里的人。这类人现在很少，因为要同时懂时序、懂硬件、还愿意啃论文。</p>
+<h4>AI 越普及，能把它落到实物上的人越值钱。</h4>
+<p>🟠 如果你正焦虑</p>
+<p>不用急着转行，也不用硬扛着装没事。挑一个你手上有的设备，把一个小模型真的塞进去跑起来，哪怕只是一个几十 KB 的分类器。跑通那一次，你对&quot;AI 到底能不能落地&quot;的判断，会比刷一百个视频都准。</p>
+<p>🔖 #嵌入式开发 #端侧AI #TinyML #AI落地 #STM32</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
