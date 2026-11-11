@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>端侧AI选型，先算这四笔账 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-11 · 自动生成</div>
+  <h1>端侧AI选型，先算这四笔账</h1>
+<p>&gt; 小红书选题序号 121：「端侧AI选型：RK3588、瑞芯微还是MCU？一张给产品经理的四维选型账」（纯技术向，未涉及行业应用）</p>
+<p>&gt; 选题来源：2026-11-11 每日选题挖掘（最推荐第 1 个）。</p>
+<p>周二下午的评审会上，老板把一块核心板推到我面前：「这个能跑 YOLO，为什么不用在下一代产品上？」会议室安静了两秒。我知道他不是在问技术，是在问预算。</p>
+<p>🟠 跑通不是选型依据</p>
+<p>B站上端侧 AI 的视频我基本都刷过，演示都停在同一个画面：屏幕框出一个框，右上角一个 fps。**能跑通只证明了软件生态存在，证明不了你的产品适合它。** 真正的选型账，要在这个画面之外算。</p>
+<p>🟠 第一笔算力，先问输入是什么</p>
+<p>RK3588 这类带 NPU 的 SoC，算力在 6 TOPS 这个量级，处理图像、语音这种高维数据才有意义。而 STM32H7 是 480MHz 的 Cortex-M7，没有 NPU，跑一个几十 KB 的定长模型刚好，跑整帧图像就别勉强。**算力不是越大越好，是越小越难选。** 输入是摄像头或麦克风，往 SoC 走；输入是一路 ADC 或一个开关量，MCU 足够。</p>
+<p>🟠 第二笔功耗，看的是平均值</p>
+<p>6 TOPS 的核心板满载常常要几瓦，加上 DDR、WiFi、散热，整机功耗上一个台阶。MCU 方案是几百毫瓦这个量级，电池供电或前端取电都从容。**功耗不只看峰值，要看产品待机时间的那个平均值。** 一个用干电池供电的现场设备，光这一条就把 SoC 排除了。</p>
+<p>🟠 第三笔单价，别只看芯片</p>
+<p>核心板的价格只是开头。电源设计、散热、DDR 布线、eMMC、Linux 镜像维护、OTA 升级，全都要人。**SoC 省下的是算法人力，花掉的是系统工程人力，两边都要算。** 我经手的产品里，有的选 MCU 是因为算法简单，有的是因为团队里没人愿意长期维护一套 BSP。</p>
+<p>🟠 第四笔时间，启动和故障恢复</p>
+<p>这条最容易被忽略。SoC 从上电到应用跑起来，几十秒很常见；MCU 是毫秒级。现场设备如果是插上就要干活，或者断电重启频繁，几十秒的冷启动会成为投诉来源。**响应时间可以优化，启动链路很难压到毫秒。**</p>
+<p>🟠 我的土办法</p>
+<p>拿一张纸画四列，算力、功耗、单价、启动与维护，把最坏情况填进去，也就是最大负载、最低温度、断网状态、三年后的维护人力。哪一列有红字，就往下一档退。**选型不是找最强的那个，是找红字最少的那个。**</p>
+<p>那次评审我们最后定了 MCU 加一颗小 SoC 的分工方案：SoC 做识别，MCU 做动作。老板后来算完账，说这个方案让他省了一笔预算，也没少功能。技术选型最难的从来不是会不会，是敢不敢往小里选。</p>
+<p>#嵌入式开发 #端侧AI #RK3588 #STM32 #硬件选型</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
