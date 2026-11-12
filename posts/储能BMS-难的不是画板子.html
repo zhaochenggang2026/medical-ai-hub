@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>储能BMS，难的不是画板子 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-12 · 自动生成</div>
+  <h1>储能BMS，难的不是画板子</h1>
+<p>&gt; 小红书选题序号 127：「嵌入式人的下一个去处：储能 BMS，难的不是画板子而是 SOC 算法」</p>
+<p>&gt; 选题来源：2026-11-12 每日选题挖掘（最推荐第 1 个）。</p>
+<p>周二晚上十点多，一个做了八年工控的老同事给我打电话。他去面一家储能公司，技术面第一题不是画板子，是「这块电池现在还剩多少电，你怎么算」。他准备了一堆 EMC、安规、叠层，一个都没用上。那一刻他才发现，自己熟的那套在这行只是入场券。</p>
+<p>🟠 硬件这层，已经不怎么考人了</p>
+<p>储能 BMS 的硬件方案已经成熟。AFE 采样芯片配隔离菊花链，加均衡电阻、主控、CAN 通信，原厂参考设计给得很全，照着改就能出板。**硬件做得出来不算本事，做出来之后能算准，才算本事。**</p>
+<p>🟠 电量为什么算不准</p>
+<p>因为 SOC 根本测不到。电压能测，电流能测，温度能测，但电池里还剩多少电荷，没有任何传感器能直接读出来。**所有 SOC 都是估出来的，不是测出来的。** 所以这个岗位偏算法，不偏硬件。</p>
+<p>🟠 第一层，安时积分</p>
+<p>最朴素的办法是把电流对时间积分，充进去多少、放出来多少，累加就行。问题是它只认增量。**初始值错了它就一路错下去，采样有个零点漂移，漂一天就积成几个百分点。**</p>
+<p>🟠 第二层，开路电压修正</p>
+<p>静置足够久，电压和 SOC 有对应关系，可以拿来校准。但磷酸铁锂的电压曲线中间有一大段平台，SOC 从三成到七成，电压只动几十毫伏。**电压采样差 10 毫伏，换算成 SOC 可能差十几个点。** 储能行业公认的难点就在这里，三元锂好些，平台区窄，但也躲不掉。</p>
+<p>🟠 第三层，模型加卡尔曼</p>
+<p>工程上的做法是建等效电路模型，把电芯拆成开路电压源串电阻电容，再用扩展卡尔曼滤波，拿实测电压和模型预测电压的残差去纠正积分。听着高级，落地全是脏活：电阻电容参数随 SOC 和温度变，要一格格标定；电压电流采样要同步，不同步在动态工况下直接引入误差；电芯温度比表面温度滞后，热模型也得跟。</p>
+<p>🟠 还有几件没人替你做的活</p>
+<p>均衡策略、老化后的容量衰减、低温下的极化、单体不一致带来的短板效应。**这些在仿真里都很乖，装进柜子一上大电流就原形毕露。**</p>
+<p>🟠 好消息是迁移成本不高</p>
+<p>积分、滤波、定点化、参数辨识，写电机控制和信号采集的时候你都摸过。换的是对象，不是基本功。**行业会换，方法论不会过期。** 真想过去，别从画板子开始，先把一阶 RC 模型和卡尔曼在 MATLAB 里跑通，再拿一组真实工况数据对一遍。</p>
+<p>最后我跟他说，面试官问 SOC，其实是在问你有没有跟不确定性打过交道。能把一个测不到的量估到能用，这件事本身就挺值钱。</p>
+<p>#嵌入式开发 #储能BMS #电池管理 #SOC估算 #卡尔曼滤波 #新能源</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
