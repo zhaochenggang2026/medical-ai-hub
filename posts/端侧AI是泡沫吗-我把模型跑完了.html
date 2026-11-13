@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>端侧AI是泡沫吗？我把模型跑完了 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-13 · 自动生成</div>
+  <h1>端侧AI是泡沫吗？我把模型跑完了</h1>
+<p>&gt; 小红书选题序号 128：「端侧AI到底是不是泡沫？我在 RK3588 上把模型跑完再回答你」（纯技术向，未涉及行业应用）</p>
+<p>&gt; 选题来源：2026-11-13 每日选题挖掘（最推荐第 3 个）。</p>
+<p>🟠 **凌晨一点，第四次编译终于过了。**</p>
+<p>板子连着串口，屏幕上把识别框叠在摄像头画面上，帧率数字在跳。我没有立刻高兴，先盯着那个数字看了十秒。因为前三版其实都跑通了，只是慢到不能用。</p>
+<p>先说结论：**端侧 AI 不是泡沫，把任何模型都往端侧塞才是泡沫。** 泡沫不在技术里，在演示视频那个零点几秒的镜头里。</p>
+<p>🟠 **第一关：算力不是瓶颈，带宽才是**</p>
+<p>RK3588 的 NPU 标称 6 TOPS，但这个数是 INT8 的峰值，成立条件写在小字里。真正决定速度的是 DDR 带宽，因为每一层卷积都要把权重从内存搬到计算单元。**芯片算得再快，数据喂不进去，一样卡。**</p>
+<p>人话解释：厨房火再猛，冰箱到灶台只有一条路，切菜的人也只能干等。</p>
+<p>🟠 **第二关：量化不是压缩，是重新谈判**</p>
+<p>想把模型塞进 NPU，几乎都要做 INT8 量化，就是把浮点权重换成 8 位整数。内存省下四分之三，代价是精度掉一点。**掉多少不看论文，看你的任务能不能容忍。**</p>
+<p>我做分类任务，掉一两个百分点基本无感。换成位置回归就不一样，框会整体偏一点，那就得改量化策略，或者关键层保留浮点。</p>
+<p>🟠 **第三关：延迟要拆成三段量**</p>
+<p>这是我最想提醒的一条。摄像头采集、缩放、色彩转换、推理、后处理画框，五件事串在一起，很多人只量了中间那一步。</p>
+<p>实际情况是：**预处理经常比推理还慢。** 我一开始用默认的软件缩放，光这一项就吃掉一大截时间，换成硬件缩放之后才顺过来。你测出来的 20 毫秒，可能有一半花在搬像素上。</p>
+<p>🟠 **那到底谁该上端侧**</p>
+<p>三个条件，满足一个就值得考虑：</p>
+<p>数据不能离开设备，比如车间里的画面；</p>
+<p>延迟要求硬，网络来回一次就超时；</p>
+<p>断网也必须能用，现场没有稳定网络。</p>
+<p>三条都不占，云端更便宜，也更好迭代。**别为了参数表上那串 TOPS，上一个自己用不到的功能。**</p>
+<p>🟠 **最后说一句**</p>
+<p>我不觉得端侧 AI 是泡沫。它只是被演示视频讲得太轻松了，把踩坑的过程全省了。</p>
+<p>真正的门槛不在买一块板子，而在你愿不愿意花几个深夜，把带宽、量化、延迟这三道关一关一关量过去。**能把这些数字说清楚的人，才配谈落地。**</p>
+<p>🔖 **#端侧AI #RK3588 #嵌入式开发 #边缘计算 #AI部署**</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
