@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X-CUBE-AI 被取代，老项目到底要不要迁 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-15 · 自动生成</div>
+  <h1>X-CUBE-AI 被取代，老项目到底要不要迁</h1>
+<p>&gt; 小红书选题序号 130：STM32Cube AI Studio 取代 X-CUBE-AI，一个用过 X-CUBE-AI 的人的对比与迁移判断（纯技术向）。</p>
+<p>&gt; 选题来源：2026-11-15 每日选题挖掘（最推荐第 3 个）。</p>
+<p>&gt; 事实核对：ST 官方产品页与 STM32Cube AI Studio 文档（2026-11 核对），X-CUBE-AI 已 NRND，ST Edge AI Core 3.0.0 起不再支持；支持芯片不含 F1/F2/L1/U0/MP1/MP2。</p>
+<p>🟠 **上周二晚上十点，翻 ST 文档，看到一行字：X-CUBE-AI 从 ST Edge AI Core 3.0.0 起不再支持。**</p>
+<p>手里那个 H7 工程的模型就是它生成的。我没急着换工具，先算清楚它动的是哪一层。</p>
+<p>🟠 **结论先给：换掉的是外壳，不是引擎。**</p>
+<p>新工具叫 STM32Cube AI Studio，独立安装，不再挂在 CubeMX 里。底下跑的还是 ST Edge AI Core 那个命令行内核，负责读模型、量化、生成 C 代码。**认清楚这点，迁移就没那么吓人。**</p>
+<p>🟠 **真正变了的，是三件事。**</p>
+<p>**量化搬进了工具里**，能喂真实数据，也多了几个旧插件没有的开关。</p>
+<p>**验证分两段**：同一批数据先在电脑上跑，再在真板子上跑。误差出在模型、量化还是硬件，分得开。以前最难受的是电脑上 98%，烧进去对不上。</p>
+<p>**可视化摊开每层耗时和 RAM、Flash 占用**，不再只给总量。</p>
+<p>但这是流程补强，**不是同一份模型跑得更快了**。引擎没换，算子调度不会因为界面变了就变大。</p>
+<p>🟠 **什么时候必须迁。**</p>
+<p>旧插件不再维护，新芯片、新算子只会出现在新工具里。</p>
+<p>量产且模型冻结的，不迁，稳定比新功能值钱。还在迭代，或准备上 N6 这类带 NPU 的片子，现在就迁，微码生成只有新工具在做。半年才动一次模型的，等改版顺手迁。</p>
+<p>NPU 是芯片里专算矩阵的加速器，微码是给它的调度指令，哪步走 NPU、哪步退回 CPU。</p>
+<p>🟠 **四个坑。**</p>
+<p>**芯片不是全集。** F1、F2、L1、U0、MP1、MP2 不支持，是这些片子就老实待着。</p>
+<p>**.ioc 能导，内存配置要重做。** 外部 RAM、内存池默认是空的，工具不替你猜。</p>
+<p>**库名和链接设置变了。** 编译过不等于内存没动，烧之前看 map。</p>
+<p>**依赖缺一个都不行。** Core、CubeMX、Programmer 都要装，否则新建工程按钮是灰的。</p>
+<p>🟠 **我的做法。**</p>
+<p>先拿一个非关键项目迁过去，把导入到板子验证跑通，再动主工程。换代时**最贵的不是学新界面，是在没有备份的情况下把在跑的项目弄崩。**</p>
+<p>工具是给你省时间的，不是给你找活的。</p>
+<p>🔖 **#嵌入式开发 #STM32 #端侧AI #X-CUBE-AI #边缘计算**</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
