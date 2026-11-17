@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20261117 选题132 AI写ESP32的三件事 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-17 · 自动生成</div>
+  <p>🟠 **上周二晚上十一点，我盯着串口助手上一行 Brownout detector was triggered，第三次复位。**</p>
+<p>那块 ESP32 的深度睡眠代码是 Claude 十几分钟写出来的，编译零警告，逻辑看着完美。可实测电流 3.2mA，而需求是 15µA。差的这两百倍，不在代码里，在代码之外。</p>
+<p>🟠 **先说它真厉害的地方**</p>
+<p>驱动模板、寄存器初始化、FreeRTOS 任务骨架、CMake 和 CI 脚本，这些活它又快又稳。这一周我至少省掉六成重复劳动。所以下面这三件事不是否定它，是把边界划清楚。</p>
+<p>🟠 **第一件，微秒级时序它算不出来**</p>
+<p>我让它写 WS2812 的驱动，它给了个 vTaskDelay 的方案，看着人畜无害。可这颗灯珠要求高电平 0.4µs、低电平 0.85µs，这个窗口里不能有任何调度介入。</p>
+<p>AI 的训练数据里全是&quot;怎么写&quot;，几乎没有&quot;在多少微秒内写完&quot;。**它能写出功能对的代码，写不出时间对的代码。**</p>
+<p>🟠 **第二件，中断里它会犯&quot;太礼貌&quot;的错**</p>
+<p>它写的 ISR 里出现了 printf 和一次 malloc。桌面编程毫无问题，在 MCU 里是灾难：打印会阻塞，堆分配要加锁，而你正站在一个绝对不能阻塞的位置上。</p>
+<p>更隐蔽的是临界区。它会把 portENTER_CRITICAL 套在一个含浮点运算的函数外面，看着保护周全，实际把系统响应时间拉长了一截。**AI 理解&quot;互斥&quot;，但不理解&quot;我这一秒只有 200 个时钟周期可以浪费&quot;。**</p>
+<p>🟠 **第三件，低功耗状态机它只给能跑的版本**</p>
+<p>就是开头那块板子。它关外设的顺序是错的：先关 RTC 时钟，再去配唤醒源。芯片每次睡下去就醒不来，靠欠压复位重开，看上去&quot;能跑&quot;，其实是靠崩溃在跑。</p>
+<p>低功耗不是一个 API 的事，是进睡眠前每个外设、每个 GPIO 上下拉、每个门控时钟的状态叠加。**这种全局状态一致性，恰好是生成模型最弱的地方，它一次只看得见一个函数。**</p>
+<p>🟠 **但边界画清了，用法反而清楚了**</p>
+<p>我的分法：模板、脚本、文档总结、编译报错定位，全交给它；时序、中断、电源状态机、安全相关逻辑，自己写，写完再让它帮忙查&quot;有没有漏掉的分支&quot;。</p>
+<p>它不会取代嵌入式工程师。它只是把&quot;会不会写驱动&quot;变得不重要，把&quot;懂不懂硬件&quot;变得极其重要。</p>
+<p>🔖 **#嵌入式开发 #ESP32 #AI编程 #低功耗设计 #单片机**</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
