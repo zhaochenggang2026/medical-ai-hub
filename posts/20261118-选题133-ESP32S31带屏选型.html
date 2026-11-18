@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20261118 选题133 ESP32S31带屏选型 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-18 · 自动生成</div>
+  <p>🟠 **昨晚十一点，一个做带屏温控器的朋友发消息问我：S31 到底能不能直接上。** 他说 B 站上那些升级实测、驱动小米手环屏、跑 LVGL 播放器的视频，他全看完了，越看越心动。</p>
+<p>我让他先把一个问题说清楚：你是想拍视频，还是想出货。</p>
+<p>🟠 **先把 S31 是什么讲清楚**</p>
+<p>它不是 S3 加了点料。它是乐鑫第一颗能跑 Linux 的芯片，官方仓库 esp-linux-bsp 里是 Buildroot 加 U-Boot 加 Linux 的完整套装，内核还用了 XIP 方式。XIP 的意思是代码直接在 Flash 里执行，不整个搬到内存，好处是省 RAM。根文件系统用 cramfs，一种只读的压缩文件系统，省空间，代价是不能直接往里写。</p>
+<p>这套组合说明官方在拼命压内存，也说明 Linux 这一档的胃口有多大。</p>
+<p>而它的状态是 Developer Preview，开发者预览版。人话说就是官方只保证现在能跑起来，不保证明年接口不变，也没有稳定性承诺和长周期供货承诺，业内预期 2027 年前后才正式发布。</p>
+<p>🟠 **带屏设备真正的四个代价**</p>
+<p>**第一是启动时间。** 裸机或 RTOS 从复位到屏幕出图，两百毫秒级就能做到。Linux 要从内核起、挂文件系统、拉起 UI 服务，秒级起步。家电用户按下开关，屏幕三秒才亮，这不叫新特性，这叫体验事故。</p>
+<p>**第二是待机功耗。** Linux 是一整栈常驻，内存控制器、DDR、文件系统都在耗电。用电池的产品，这张电费单很硬。RTOS 能把大部分外设关掉只留一个唤醒源，Linux 要做到同样水平，功夫全在休眠策略上。</p>
+<p>**第三是内存和 BOM。** 跑完整 Linux 需要 MB 级 RAM 和可写存储，常见 S3 模组那套 8MB PSRAM 加 16MB Flash 的配置会很紧。这一档上去，板子的成本结构就变了。</p>
+<p>**第四是掉电和 OTA。** 可写文件系统遇到突然断电，比裸机更容易受伤。只读根文件系统、A/B 双分区升级、掉电检测这几样，必须从第一天就设计进去，不能等出事再补。</p>
+<p>🟠 **那什么时候真的该等它**</p>
+<p>当你的产品需要**进程隔离**，一个界面进程崩了主控还活着；需要直接跑 Python 或者现成的 Linux 库；需要接 USB 摄像头做视频流；需要完整的网络栈和包管理。这些事在 RTOS 上硬塞，最后都是自己写一套调度和内存管理。</p>
+<p>那时候，Linux 不是负担，是省下来的三个月。</p>
+<p>🟠 **我的判断**</p>
+<p>现在要出货的带屏设备，S3 还是主力，界面再复杂一点、要多媒体就上 P4，注意 P4 没有原生无线，得外挂。S31 现在最正确的用法是：买一块板子，把 BSP、你的屏幕、触摸、音频驱动跑一遍，把工作量估出来，但别写进 BOM。</p>
+<p>选型从来不是选最强的那个。是选两年后你最不想推翻重来的那一版。新平台值得看，但真正值得等的是需求，不是热度。</p>
+<p>#嵌入式 #ESP32 #单片机选型 #带屏设备 #硬件开发</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
