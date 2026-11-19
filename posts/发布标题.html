@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布标题 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-19 · 自动生成</div>
+  <h1>发布标题</h1>
+<p>AI 给的参数，别直接写进设备</p>
+<h1>正文</h1>
+<p>上周三下午，产线一台设备起不来，你翻着手册排查了两小时。最后发现是我自己把一串 AI 给的初始化参数直接写进了寄存器，第七个地址在芯片手册里压根不存在，机器动了三秒就报了故障码。</p>
+<p>🟠 聊天框里答错是笑话，设备里答错是故障</p>
+<p>在对话框里，模型说错了你一眼就能看出来，因为它输出的是人话。但到了设备上，模型输出的不是段落，是参数、地址、命令序列。这些东西**格式完全合法，看起来全对**，一直到它被真正写进硬件。幻觉最麻烦的地方就在这儿，它不会以「我可能错了」的样子出现，它总是以「非常自信、格式漂亮」的样子出现。</p>
+<p>🟠 模型为什么会自己编配置</p>
+<p>因为它学的是「像不像」，不是「对不对」。寄存器表在一本手册里是成片的十六进制段，它记住了「这一段大概长这样」，遇到没见过的地方就顺手补一个连续的地址上去。说人话：**它在按概率填空，不是在查表**。填空填得越顺，看起来越可信。</p>
+<p>🟠 我现在的四道校验，写给同样踩坑的你</p>
+<p>第一道是白名单。所有能下发的寄存器、命令，先在固件侧建一张表，模型只能从这张表里选，不能自由生成。格式校验只解决「长得对」，白名单才解决「真的存在」。</p>
+<p>第二道是结构和范围。每个字段带类型、最小值、最大值、单位，超出范围直接驳回，不让它流到下一步。一个电压参数给出 900 伏，问题不是它错，是它根本不进校验就跑下去了。</p>
+<p>第三道是独立复核。关键参数让规则引擎或另一个小模型单独算一遍，两边不一致就停下来交给人，不做折中。</p>
+<p>第四道人确认点在「写之前」。设备不是聊天框，按下去了没法撤回，所以确认按钮必须放在动作之前，不是之后。再配一条全链路日志，原始输出、校验结果、最终下发值一起存，出问题能回放。</p>
+<p>🟠 一个简单的判断标准</p>
+<p>凡是动作不可逆、错一次代价不对称的地方，都得有校验层。**AI 可以负责猜下一步，但不能负责按下最后的确认。**</p>
+<p>不用因为怕幻觉就不用它。把它放在提建议的位置，把决策留给规则和人，这套校验搭一次，后面每个项目都能复用。你如果在做端侧 AI 落地，评论区聊聊你的校验放在哪一层。</p>
+<h1>标签</h1>
+<p>#端侧AI #嵌入式开发 #AI落地 #STM32 #工业自动化</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
