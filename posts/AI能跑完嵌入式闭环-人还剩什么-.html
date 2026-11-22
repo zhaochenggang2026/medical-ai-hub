@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI能跑完嵌入式闭环，人还剩什么？ | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-22 · 自动生成</div>
+  <h1>AI能跑完嵌入式闭环，人还剩什么？</h1>
+<p>&gt; 小红书选题序号 137：「AI已经能自己跑完嵌入式开发闭环了，那还要人干什么？」</p>
+<h2>发布标题（20字内）</h2>
+<p>AI能跑完嵌入式闭环，人还剩什么？</p>
+<h2>正文（可直接复制）</h2>
+<p>周四晚上十点，我把最后一版固件丢给 AI 打包，它两分钟跑完编译、烧录、自测，串口吐出一整屏 PASS。我盯着屏幕，突然有点空。以前这一整套是我一晚上的活，现在它比我快，也不抱怨。</p>
+<p>🟠 先说清这套闭环到底自动化了什么。编译报错、单元测试、烧录、读日志，这四件事有个共同点：结果能被文本判定。凡是能写成&quot;成功还是失败&quot;的东西，AI 就能自己迭代下去。所以真正被替掉的不是写代码，是跑流程和读失败信息。</p>
+<p>🟠 它跑不到的地方，在那些没写进判据的现实里。上周它交给我一版 SPI 驱动，编译零警告，自测全绿。我拿示波器一测，片选信号比第一个时钟只早了两个纳秒，芯片手册要求至少五个。**编译通过、测试全绿、板子能跑，三件事都不等于对。** 这种偏差，只有人拿探头看波形才看得见。</p>
+<p>🟠 所以我现在的活变了。以前我写代码，现在我写&quot;什么叫对&quot;：把手册里的时序要求、上电顺序、温度区间，一条条翻译成可执行的断言。断言就是程序里的一句检查，条件不成立就立刻报错停下。AI 越能跑闭环，这套判据越值钱，因为它是 AI 唯一能读懂的&quot;对&quot;。</p>
+<p>🟠 还有一件事我没交出去：硬件边界的最终否决权。改时钟树、动电源、碰启动区，这些动作的代价是一块板加两天工期。AI 不会为这个代价心疼，所以我留了一道三十秒的人工放行。</p>
+<p>🟠 说白了，闭环越完整，人的位置就越往上走。从拧螺丝的人，变成画图纸的人，再变成定验收标准的人。</p>
+<p>它抢走的从来不是手艺，是重复。你手上那点&quot;看一眼就知道不对&quot;的直觉，反而是眼下最贵的部分。</p>
+<h2>标签</h2>
+<p>#嵌入式开发 #AI编程 #STM32 #硬件调试 #AI Agent</p>
+<h2>发布注意事项</h2>
+<p class='li'>• 标题 20 字内，别再加字</p>
+<p class='li'>• 正文标星处手动加粗（App 里长按选中）</p>
+<p class='li'>• 标签保留 5 个</p>
+<p class='li'>• 全文破折号 0 个，发布前别手补</p>
+<p class='li'>• 无医疗词，属纯嵌入式技术向</p>
+<p class='li'>• 建议与昨天那篇（选题136，AI接管闭环烧板）隔 3 天以上再发，避免同题材撞车</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
