@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI写得动网站，写不动SPI时序 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-24 · 自动生成</div>
+  <h1>AI写得动网站，写不动SPI时序</h1>
+<p>&gt; 小红书选题序号 139：「AI 能一天写 500 个网站，却写不出一份能过时序的 SPI 驱动」</p>
+<h2>发布标题（20字内）</h2>
+<p>AI写得动网站，写不动SPI时序</p>
+<h2>正文（可直接复制）</h2>
+<p>上周四晚上，同事在群里丢了个视频：有人让 AI 十分钟做出一个能上线的网站，评论区一片欢呼。我关掉视频，回头看自己屏幕上那段 SPI 驱动，已经改到第三版，示波器抓到的波形还是错的。</p>
+<p>🟠 一边是十分钟一个网站，一边是两天调不通一个外设。这就是 AI 编程在嵌入式真正撞墙的地方。</p>
+<p>🟠 AI 在 Web 上不是运气好。浏览器是台很宽容的机器：写错了就刷新，报错直接打在屏幕上，改完再刷。反馈是秒级的，这种活它天生擅长：模式清晰、反馈即时、试错免费。</p>
+<p>🟠 嵌入式这边，三个条件全都不成立。</p>
+<p>第一，时序不在训练集里，在数据手册里。SPI 有四种模式，靠 CPOL 和 CPHA 两个位决定：时钟空闲时是高还是低，数据在第一个边沿还是第二个边沿采样。错一位，从设备的整帧数据整体错位，读回来全是 0xFF 或 0x00。AI 会给你一段特别规范的初始化，寄存器逐个都对，但模式配错、片选没保持低电平、字节之间没留建立时间。</p>
+<p>第二，反馈太慢。烧一次板子十几秒，逻辑分析仪还要设触发，抓到波形再对着时序图一个边沿一个边沿数。AI 能读你的代码，读不到你的板子，它看不见 SCK 上那个毛刺。</p>
+<p>第三，幻觉在寄存器上代价高。Web 里 API 写错，顶多 404 白屏。寄存器地址编错，轻则外设不动，重则动到保留位把芯片锁死，只能重新上电。</p>
+<p>🟠 所以不是 AI 变笨了，是任务性质变了。它学的是「大多数人在这类场景下这么写」，不是「你这块板子这么跑」。文本世界里够用的概率，落到物理引脚上就成了一场赌博。</p>
+<p>🟠 我的用法很简单，把它放到擅长的位置上。让它把散在十几页里的寄存器说明整理成对照表，人再对着时序图核。让它写测试脚本、波形解析、日志格式化，这些活它快得多。</p>
+<p>时序关键路径、中断优先级、安全相关代码，我自己写，自己上示波器。</p>
+<p>🟠 我每天都在用 AI 干活，也没打算停。只是有个认知得校准：**它擅长文字世界的模式，不擅长物理世界的时间。** 嵌入式的门槛从来不在敲代码，在你愿不愿意为一个边沿负责。</p>
+<h2>标签</h2>
+<p>#嵌入式开发 #AI编程 #STM32 #SPI #硬件调试</p>
+<h2>发布注意事项</h2>
+<p class='li'>• 标题 16 字，留出余量，别再加字</p>
+<p class='li'>• 正文标星处手动加粗（App 里长按选中）</p>
+<p class='li'>• 标签保留 5 个</p>
+<p class='li'>• 全文破折号 0 个，发布前别手补</p>
+<p class='li'>• 无医疗词，纯嵌入式加 AI 技术向</p>
+<p class='li'>• 建议隔天再发，别和昨天的「12 个 AI 术语」一篇连着放，同题材撞车</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
