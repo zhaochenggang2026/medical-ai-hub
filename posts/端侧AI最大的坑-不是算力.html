@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>端侧AI最大的坑，不是算力 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-25 · 自动生成</div>
+  <h1>端侧AI最大的坑，不是算力</h1>
+<p>&gt; 小红书选题序号 140：「端侧AI最大的坑不是算力：RK3588和STM32上真跑模型的3个血泪教训」</p>
+<h2>发布标题（20字内）</h2>
+<p>端侧AI最大的坑，不是算力</p>
+<h2>正文（可直接复制）</h2>
+<p>上周二深夜十一点，实验室只剩机箱风扇的声音。我盯着屏幕上那条延迟曲线，模型在板子上跑出来的每一帧都在抖。电脑上跑得好好的，一上板就变样，像考前背熟了，进考场却一片空白。</p>
+<p>🟠 那是我第一次往 RK3588 上搬模型。出发前最担心算力，三天后发现它是最不该担心的一环。</p>
+<p>🟠 第一个坑：量化掉的精度，不会主动告诉你。</p>
+<p>训练完的模型是 32 位浮点，板子上的 NPU 只认 8 位整数。把浮点压成整数这一步叫量化，说人话就是小数点后那一长串数字全砍掉，只留整数。</p>
+<p>砍法有讲究。整层共用一个缩放系数，只要层里有个别数值特别大，其他数值就被一起压扁；按通道分开算，精度能救回来一截。我第一版图省事用了整层量化，分类结果整体偏移，置信度全挤在 0.5 附近，模型看起来在猜。</p>
+<p>🟠 第二个坑：算子不支持，工具链悄悄回退到 CPU。</p>
+<p>转换脚本跑通，不代表模型真在 NPU 上跑。有些算子 NPU 没有实现，工具链不报错，而是默默把那一层丢回 CPU 算。日志没有红字，你只觉得慢。</p>
+<p>判断方法只有一个，看每层耗时分布。某一层突然比前后大一个数量级，基本就是被回退了。对策是换等价写法，比如把激活函数换成 NPU 支持的近似版本，或者把这一层和相邻层合并掉。</p>
+<p>🟠 第三个坑：功耗和实时性，是一对反向旋钮。</p>
+<p>NPU 的标称算力都按满频满负荷算。RK3588 标称 6 TOPS，前提是 INT8、三核全开、散热良好。真塞进塑料壳里连续跑，温度一上来就降频，帧率跟着掉。</p>
+<p>换到 STM32 这类 MCU 上，问题正好反过来：不是算不动，是不敢一直算。主频有限，一次推理几百毫秒，功耗和响应时间直接打架。要么降分辨率，要么降帧率，要么把模型砍到只做特征提取。</p>
+<p>🟠 三天下来我的结论是，**端侧 AI 真正的门槛不在算力，在精度、算子、功耗这三张表，你能不能提前算清楚。** 算力是花钱买得到的，这三张表只能自己一格一格填。</p>
+<p>如果你也正要把模型往板子上搬，别急着比跑分。先拿一小段真实数据，把这三件事各测一遍，能省不少时间。</p>
+<h2>标签</h2>
+<p>#端侧AI #嵌入式开发 #RK3588 #STM32 #AI部署</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
