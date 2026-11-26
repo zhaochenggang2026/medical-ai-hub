@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI之后嵌入式凉没凉，分三层看 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-26 · 自动生成</div>
+  <h1>AI之后嵌入式凉没凉，分三层看</h1>
+<p>&gt; 小红书选题序号 141：「AI 之后嵌入式到底凉没凉？按 MCU 裸机 / RTOS / Linux 端侧三层拆开算账」</p>
+<h2>发布标题（20字内）</h2>
+<p>AI之后嵌入式凉了吗，分三层看</p>
+<h2>正文（可直接复制）</h2>
+<p>周一早上通勤，我在手机上刷到一条视频，标题写着「AI之后嵌入式已经凉了」。旁边座位的人在敲笔记本改代码，我盯着那条标题想了一路，心里有点不服气，又说不清哪里不对。</p>
+<p>🟠 后来想明白了，这句话的问题不在对错，在于它把三个完全不同的岗位捆在一起，下了一个结论。</p>
+<p>嵌入式不是一个行业，至少是三层的活。</p>
+<p>🟠 第一层，MCU 裸机。</p>
+<p>寄存器配置、时序、中断优先级、内存几个字节怎么摆。这一层 AI 帮不上太多。它不知道你板子上那颗电容的实际容值，也不知道这次走线比上次长了三厘米。它写的初始化代码读起来很顺，上板一跑，时序就是差那么一点点。这一层反而更值钱，因为能对着示波器找出那一点点的人，正在变少。</p>
+<p>🟠 第二层，RTOS 和多任务。</p>
+<p>这里 AI 的用处开始变实。任务划分、优先级排布、栈大小估算、死锁排查，这些是有套路的通用知识，AI 见过足够多的代码，能交出一份像样的初稿。但初稿不等于能用，抢占优先级配错一格，可能跑三天才在某个偶发场景里炸一次，这种问题还是要人守着现场。</p>
+<p>🟠 第三层，Linux 端侧加模型部署。</p>
+<p>这一层变化最大，也最热闹。量化、算子适配、NPU 回退、功耗和散热预算，现在的活更像把一堆现成零件装成一台能长期跑的机器。工具链在进步，人的价值从「会不会写」变成「知不知道该测什么」。</p>
+<p>🟠 所以我的判断是，**AI 淘汰的不是嵌入式，是「只会照抄例程」的那部分工作。** 越靠近物理世界，越靠近真实硬件的不确定性，越难被替掉。</p>
+<p>如果你最近也在焦虑这件事，可以先问自己一句：我手上的活，有多少必须看着波形才能定？那个比例，大概就是你的护城河。</p>
+<h2>标签</h2>
+<p>#嵌入式开发 #STM32 #RTOS #端侧AI #AI转型</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
