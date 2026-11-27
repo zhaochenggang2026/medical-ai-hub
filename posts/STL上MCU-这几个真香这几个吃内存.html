@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STL上MCU，这几个真香这几个吃内存 | 医疗AI前沿</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --accent:#38bdf8; --green:#4ade80; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; }
+.container { max-width:800px; margin:0 auto; padding:30px 20px; }
+h1 { font-size:1.8em; color:var(--accent); margin-bottom:10px; }
+h2 { color:var(--accent); margin:25px 0 10px; }
+h3 { color:var(--green); margin:20px 0 8px; }
+p { margin:10px 0; color:#cbd5e1; }
+pre { background:#0b1120; border:1px solid #334155; border-radius:8px; padding:15px; overflow-x:auto; font-size:.85em; color:#7dd3fc; }
+.back { display:inline-block; margin:20px 0; color:var(--accent); text-decoration:none; }
+.date { color:var(--green); font-size:.85em; }
+.auto { text-align:center; color:#64748b; font-size:.8em; margin-top:40px; padding-top:20px; border-top:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="../index.html">← 返回首页</a>
+  <div class="date">2026-11-27 · 自动生成</div>
+  <h1>STL上MCU，这几个真香这几个吃内存</h1>
+<p>&gt; 小红书选题序号 142：「写 Qt 之前先想清楚：C 程序员用 STL，哪几个组件真香、哪几个会把内存吃光」</p>
+<h2>发布标题（20字内）</h2>
+<p>STL上MCU，这几个真香这几个吃内存</p>
+<h2>正文（可直接复制）</h2>
+<p>晚上十点半，我把 Qt 工程交叉编译进板子，界面点两下就重启。串口一打，剩余堆只剩 4KB。那一刻我心里发凉：代码在 PC 上一行没错，搬到板子上就成了定时炸弹。</p>
+<p>🟠 从 C 转过来的人最容易犯的错，是把 STL 当成 API 用，以为 vector 就是「会自己长大的数组」。</p>
+<p>它确实会长大，代价是每次扩容都向堆要更大的地，搬走老数据再还掉旧地，还掉的旧地夹在中间就成了洞。</p>
+<p>🟠 先说真香的。**std::array 完全不上堆**，长度编译期定死，占栈或者静态区，和 C 数组一样但带 size()，固定点数缓冲用它最稳。**vector 的关键动作是 reserve**，最多存 64 个点就先 reserve(64)，省掉十几次重新分配。**std::span 只借不拥有**，传参不拷贝，可以理解成「带长度的指针」。</p>
+<p>但是 reserve 也不是万能。容量一旦要涨，vector 还是得把老数据整体搬走，搬的那一刻就是内存峰值最高的那一刻。</p>
+<p>🟠 再说吃内存的。**std::string 只存三个字符也带着整套容量管理**，日志拼接放在高频路径，一秒几百次构造析构，堆就被切成筛子。map 每个节点单独分配，删了再加，碎片跑得比内存涨得还快。异常和 RTTI 带类型表，镜像变大，不少 MCU 工具链默认就关着。shared_ptr 的计数是原子操作，多线程里保证的是安全，不是免费。</p>
+<p>🟠 机制一句话：**嵌入式怕的不是内存不够，是最大连续块不够。** 总剩余 20KB 也救不了一个要 8KB 的申请。而且每块内存还带几个字节的管理头，块越零碎，这部分占比越高。</p>
+<p>所以解法是少向堆要地。用 pmr（多态内存资源，把分配指向静态缓冲区）或者自定义分配器指到固定区域，跑一年堆的形状都不变。</p>
+<p>🟠 Qt 的容器是隐式共享的，赋值不拷贝，写时才分离。单线程里很香，跨线程传容器时共享计数就成了竞态源，该 detach 就 detach。</p>
+<p>写 C 的人上手 Qt，最好的心态不是「终于有现成轮子」，而是每写一行都知道这块内存从哪来。**同样的功能，能不上堆的版本就是更耐跑的版本。**</p>
+<p>如果你也刚把第一个 C 程序搬进 Qt，可以先做件小事：把工程里的 new、push_back、字符串拼接逐个标出来，数数多少次分配发生在循环里。</p>
+<h2>标签</h2>
+<p>#嵌入式开发 #C语言 #Qt #STM32 #内存管理</p>
+  <div class="auto">⚡ 由 Hermes Agent 自动生成</div>
+</div>
+</body>
+</html>
